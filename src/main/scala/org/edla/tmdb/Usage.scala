@@ -16,14 +16,10 @@ object Usage extends App {
   val movie = Await.result(tmdbClient.getMovie(54181), 5 seconds)
   tmdbClient.log.info(s"OK got a movie ${movie.title}")
 
+  Await.result(tmdbClient.downloadPoster(movie, "/tmp/poster.jpg"), 5 seconds)
+    
   val movies = Await.result(tmdbClient.searchMovie("shark"), 5 seconds)
   for (m ← movies.results) tmdbClient.log.info(s"find ${m.title}")
-
-  tmdbClient.downloadPoster(movie, "/tmp/poster.jpg")
-
-  //downloadPoster is async so we need to wait a little before shutdown
-  //TODO : http://letitcrash.com/post/30165507578/shutdown-patterns-in-akka-2
-  Thread.sleep(5000)
 
   tmdbClient.shutdown
 

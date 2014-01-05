@@ -50,10 +50,12 @@ class TMDbClient(apiKey: String) extends TmdbApi {
     }
   }, 1.seconds)
   // alternative syntax
-  /*  val pipeline0 = for (
+  /*  
+  val pipeline0 = for (
     Http.HostConnectorInfo(connector, _) ← IO(Http) ? Http.HostConnectorSetup("api.themoviedb.org", port = 80)
   ) yield sendReceive(connector)
-  lazy val basicPipeline = Await.result(pipeline0, 1.seconds)*/
+  lazy val basicPipeline = Await.result(pipeline0, 1.seconds)
+  */
 
   lazy val baseUrl = Await.result(getConfiguration(), 1 seconds).images.base_url
 
@@ -89,17 +91,16 @@ class TMDbClient(apiKey: String) extends TmdbApi {
     val result = (IO(Http) ? HttpRequest(GET, Uri(url))).mapTo[HttpResponse]
 
     import java.nio.file.{ Paths, Files }
-    result.foreach { response: HttpResponse ⇒
-      val bytes = response.entity.data.toByteArray
-      log.info(s"Got ${bytes.length} bytes")
-      Files.write(Paths.get(path), bytes)
-    }
-    //alternative syntax
-    /*    import scala.util.{ Success, Failure }
-    result.mapTo[HttpResponse] onComplete {
-      case Success(reponse) ⇒
-        println(s"Got ${reponse.entity.data.toByteArray.length} bytes")
-    }*/
-  }
+    import scala.concurrent.future
 
+    val f = Future {
+      result.foreach { response: HttpResponse ⇒
+        val bytes = response.entity.data.toByteArray
+        log.info(s"Got ${bytes.length} bytes")
+        Files.write(Paths.get(path), bytes)
+        log.info("done")
+      }
+    }
+    Future.sequence(List(result,f))
+  }
 }

@@ -1,4 +1,4 @@
-# TMDb-async-client [![Build Status](https://buildhive.cloudbees.com/job/newca12/job/scala-atp/badge/icon)](https://buildhive.cloudbees.com/job/newca12/job/TMDb-async-client/) [![Ohloh](https://www.ohloh.net/p/TMDb-async-client/widgets/project_thin_badge.gif)](https://www.ohloh.net/p/TMDb-async-client)
+# TMDb-async-client [![Build Status](https://buildhive.cloudbees.com/job/newca12/job/TMDb-async-client/badge/icon)](https://buildhive.cloudbees.com/job/newca12/job/TMDb-async-client/) [![Ohloh](https://www.ohloh.net/p/TMDb-async-client/widgets/project_thin_badge.gif)](https://www.ohloh.net/p/TMDb-async-client)
 
 ### About ###
 TMDb-async-client is a native Scala SDK that provides asynchronous access to the [The Movie Database][1] (TMDb) API.  
@@ -7,8 +7,6 @@ It is built heavily on [spray-client][2] for async non-blocking HTTP I/O and [sp
 TMDb-async-client is an EDLA project.
 
 The purpose of [edla.org](http://www.edla.org) is to promote the state of the art in various domains.
-
-This project is part of [EDLA](http://www.edla.org). 
 
 ### Usage
 
@@ -26,10 +24,6 @@ Each function returns a `Future` of the response from the TMDb API, parsed into 
   val movies = tmdbClient.searchMovie("shark")
 
   tmdbClient.downloadPoster(movie, "/tmp/poster.jpg")
-
-  //downloadPoster is async so we need to wait a little before shutdown
-  //TODO : http://letitcrash.com/post/30165507578/shutdown-patterns-in-akka-2
-  Thread.sleep(5000)
 
   tmdbClient.shutdown
 ```
