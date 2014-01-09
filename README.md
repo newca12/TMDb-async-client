@@ -1,4 +1,4 @@
-# TMDb-async-client [![Build Status](https://buildhive.cloudbees.com/job/newca12/job/TMDb-async-client/badge/icon)](https://buildhive.cloudbees.com/job/newca12/job/TMDb-async-client/) [![Ohloh](https://www.ohloh.net/p/TMDb-async-client/widgets/project_thin_badge.gif)](https://www.ohloh.net/p/TMDb-async-client)
+# TMDb-async-client [![Build Status](https://travis-ci.org/newca12/TMDb-async-client.png?branch=master)](https://travis-ci.org/newca12/TMDb-async-client) [![Coverage Status](https://coveralls.io/repos/newca12/TMDb-async-client/badge.png)](https://coveralls.io/r/newca12/TMDb-async-client) [![Ohloh](https://www.ohloh.net/p/TMDb-async-client/widgets/project_thin_badge.gif)](https://www.ohloh.net/p/TMDb-async-client)
 
 ### About ###
 TMDb-async-client is a native Scala SDK that provides asynchronous access to the [The Movie Database][1] (TMDb) API.  
@@ -7,6 +7,14 @@ It is built heavily on [spray-client][2] for async non-blocking HTTP I/O and [sp
 TMDb-async-client is an EDLA project.
 
 The purpose of [edla.org](http://www.edla.org) is to promote the state of the art in various domains.
+
+### API Key ###
+You will need an API key to The Movie Database to access the API.  To obtain a key, follow these steps:
+
+1. Register for and verify an [account](https://www.themoviedb.org/account/signup).
+2. [Log](https://www.themoviedb.org/login) into your account
+3. Select the API section on left side of your account page.
+4. Click on the link to generate a new API key and follow the instructions.
 
 ### Usage
 
