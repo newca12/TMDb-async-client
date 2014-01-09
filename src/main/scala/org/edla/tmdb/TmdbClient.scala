@@ -101,6 +101,6 @@ class TMDbClient(apiKey: String) extends TmdbApi {
         log.info("done")
       }
     }
-    Future.sequence(List(result,f))
+    Future.sequence(List(result, f))
   }
 }

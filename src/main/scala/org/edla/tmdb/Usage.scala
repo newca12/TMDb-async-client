@@ -17,7 +17,7 @@ object Usage extends App {
   tmdbClient.log.info(s"OK got a movie ${movie.title}")
 
   Await.result(tmdbClient.downloadPoster(movie, "/tmp/poster.jpg"), 5 seconds)
-    
+
   val movies = Await.result(tmdbClient.searchMovie("shark"), 5 seconds)
   for (m ← movies.results) tmdbClient.log.info(s"find ${m.title}")
 
