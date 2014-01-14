@@ -6,7 +6,7 @@ import scala.concurrent.duration.DurationInt
 object Usage extends App {
   import scala.language.postfixOps
 
-  val apiKey = "REPLACE THIS WITH YOUR OWN API KEY"
+  val apiKey = "REPLACE_THIS_WITH_YOUR_OWN_API_KEY"
 
   val tmdbClient = TmdbClient(apiKey)
 

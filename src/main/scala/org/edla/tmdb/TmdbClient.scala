@@ -60,22 +60,22 @@ class TMDbClient(apiKey: String) extends TmdbApi {
   lazy val baseUrl = Await.result(getConfiguration(), 1 seconds).images.base_url
 
   def getConfiguration() = {
-    val pipeline = basicPipeline ~> unmarshal[Configuration]
+    val pipeline = basicPipeline ~> mapErrors ~> unmarshal[Configuration]
     pipeline(Get(s"/3/configuration?api_key=${apiKey}"))
   }
 
   def getToken() = {
-    val pipeline = basicPipeline ~> unmarshal[AuthenticateResult]
+    val pipeline = basicPipeline ~> mapErrors ~> unmarshal[AuthenticateResult]
     pipeline(Get(s"/3/authentication/token/new?api_key=${apiKey}"))
   }
 
   def getMovie(id: Int) = {
-    val pipeline = basicPipeline ~> unmarshal[Movie]
+    val pipeline = basicPipeline ~> mapErrors ~> unmarshal[Movie]
     pipeline(Get(s"/3/movie/${id}?api_key=${apiKey}"))
   }
 
   def searchMovie(query: String) = {
-    val pipeline = basicPipeline ~> unmarshal[Results]
+    val pipeline = basicPipeline ~> mapErrors ~> unmarshal[Results]
     pipeline(Get(s"/3/search/movie?api_key=${apiKey}&query=${query}"))
   }
 
@@ -102,5 +102,16 @@ class TMDbClient(apiKey: String) extends TmdbApi {
       }
     }
     Future.sequence(List(result, f))
+  }
+
+  val mapErrors = (response: HttpResponse) ⇒ {
+    import spray.json._
+    if (response.status.isSuccess) response else {
+      response.entity.asString.asJson.convertTo[Error] match {
+        case e ⇒
+          shutdown
+          throw new RuntimeException(s"[status_code: ${e.status_code}] ${e.status_message}")
+      }
+    }
   }
 }

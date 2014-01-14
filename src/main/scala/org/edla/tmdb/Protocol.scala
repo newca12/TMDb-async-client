@@ -19,6 +19,8 @@ case class Images(still_sizes: List[String], poster_sizes: List[String], base_ur
                   secure_base_url: String, logo_sizes: List[String], backdrop_sizes: List[String])
 case class Configuration(images: Images, change_keys: List[String])
 
+case class Error(status_code: Long, status_message: String)
+
 object Protocol extends DefaultJsonProtocol {
   implicit val authenticateResultFormat = jsonFormat3(AuthenticateResult)
   implicit val productionCountriesFormat = jsonFormat2(ProductionCountry)
@@ -30,4 +32,5 @@ object Protocol extends DefaultJsonProtocol {
   implicit val resultsFormat = jsonFormat4(Results)
   implicit val imagesFormat = jsonFormat7(Images)
   implicit val configurationFormat = jsonFormat2(Configuration)
+  implicit val error = jsonFormat2(Error)
 }
