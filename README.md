@@ -1,4 +1,4 @@
-# TMDb-async-client [![Build Status](https://travis-ci.org/newca12/TMDb-async-client.png?branch=master)](https://travis-ci.org/newca12/TMDb-async-client) [![Coverage Status](https://coveralls.io/repos/newca12/TMDb-async-client/badge.png)](https://coveralls.io/r/newca12/TMDb-async-client) [![Ohloh](https://www.ohloh.net/p/TMDb-async-client/widgets/project_thin_badge.gif)](https://www.ohloh.net/p/TMDb-async-client)
+# TMDb-async-client [![Build Status](https://travis-ci.org/newca12/TMDb-async-client.png?branch=master)](https://travis-ci.org/newca12/TMDb-async-client) [![Coverage Status](https://coveralls.io/repos/newca12/TMDb-async-client/badge.png)](https://coveralls.io/r/newca12/TMDb-async-client) [![Ohloh](http://www.ohloh.net/p/TMDb-async-client/widgets/project_thin_badge.gif)](https://www.ohloh.net/p/TMDb-async-client)
 
 ### About ###
 TMDb-async-client is a native Scala SDK that provides asynchronous access to the [The Movie Database][1] (TMDb) API.  
@@ -23,7 +23,7 @@ See [Usage.scala](https://github.com/newca12/TMDb-async-client/blob/master/src/m
 Each function returns a `Future` of the response from the TMDb API, parsed into a convenient case class.
 
 ``` scala
-  val apiKey = "REPLACE THIS WITH YOUR OWN API KEY"
+  val apiKey = "REPLACE_THIS_WITH_YOUR_OWN_API_KEY"
 
   val tmdbClient = TmdbClient(apiKey)
 
