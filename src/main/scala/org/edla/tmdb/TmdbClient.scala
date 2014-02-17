@@ -7,9 +7,7 @@ import scala.concurrent.Future
 import scala.concurrent.duration.DurationInt
 import scala.language.postfixOps
 import scala.util.Success
-
 import com.typesafe.config.ConfigFactory
-
 import akka.actor.ActorSystem
 import akka.event.Logging
 import akka.io.IO
@@ -27,6 +25,7 @@ import spray.http.HttpResponse
 import spray.http.Uri
 import spray.httpx.SprayJsonSupport.sprayJsonUnmarshaller
 import spray.util.pimpFuture
+import spray.http.StatusCodes
 
 object TmdbClient {
   def apply(apiKey: String) = new TMDbClient(apiKey)
@@ -65,7 +64,7 @@ class TMDbClient(apiKey: String) extends TmdbApi {
   }
 
   def getToken() = {
-    val pipeline = basicPipeline ~> mapErrors ~> unmarshal[AuthenticateResult]
+    val pipeline = basicPipeline ~> mapErrorsNoException[AuthenticateResult]
     pipeline(Get(s"/3/authentication/token/new?api_key=${apiKey}"))
   }
 
@@ -114,4 +113,15 @@ class TMDbClient(apiKey: String) extends TmdbApi {
       }
     }
   }
+
+  import spray.httpx.unmarshalling.FromResponseUnmarshaller
+  def mapErrorsNoException[T <: TmdbResponse](implicit unmarshaller: FromResponseUnmarshaller[T]) =
+    (futRes: Future[HttpResponse]) ⇒ futRes.map { res ⇒
+      if (res.status.isSuccess)
+        unmarshal[T](unmarshaller)(res)
+      else {
+        import spray.json._
+        res.entity.asString.asJson.convertTo[Error]
+      }
+    }
 }

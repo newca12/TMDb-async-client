@@ -2,7 +2,8 @@ package org.edla.tmdb
 
 import spray.json.DefaultJsonProtocol
 
-case class AuthenticateResult(expires_at: String, request_token: String, success: Boolean)
+sealed abstract class TmdbResponse
+case class AuthenticateResult(expires_at: String, request_token: String, success: Boolean) extends TmdbResponse
 case class ProductionCountry(iso_3166_1: String, name: String)
 case class Genre(id: Long, name: String)
 case class ProductionCompanie(name: String, id: Long)
@@ -19,7 +20,7 @@ case class Images(still_sizes: List[String], poster_sizes: List[String], base_ur
                   secure_base_url: String, logo_sizes: List[String], backdrop_sizes: List[String])
 case class Configuration(images: Images, change_keys: List[String])
 
-case class Error(status_code: Long, status_message: String)
+case class Error(status_code: Long, status_message: String) extends TmdbResponse
 
 object Protocol extends DefaultJsonProtocol {
   implicit val authenticateResultFormat = jsonFormat3(AuthenticateResult)
