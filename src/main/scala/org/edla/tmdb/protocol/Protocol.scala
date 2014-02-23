@@ -1,4 +1,4 @@
-package org.edla.tmdb
+package org.edla.tmdb.api
 
 import spray.json.DefaultJsonProtocol
 

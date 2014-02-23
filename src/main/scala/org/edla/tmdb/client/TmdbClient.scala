@@ -1,4 +1,4 @@
-package org.edla.tmdb
+package org.edla.tmdb.client
 
 import scala.async.Async.async
 import scala.async.Async.await
@@ -27,6 +27,7 @@ import spray.http.HttpResponse
 import spray.http.Uri
 import spray.httpx.SprayJsonSupport.sprayJsonUnmarshaller
 import spray.util.pimpFuture
+import org.edla.tmdb.api._
 
 object TmdbClient {
   def apply(apiKey: String) = new TMDbClient(apiKey)
@@ -37,13 +38,13 @@ class TMDbClient(apiKey: String) extends TmdbApi {
   import scala.language.postfixOps
   import system.dispatcher // execution context for futures
   import scala.concurrent.duration._
-  import org.edla.tmdb.Protocol._
+  import org.edla.tmdb.api.Protocol._
 
   private implicit val system = ActorSystem()
   private implicit val timeout = Timeout(10.seconds)
   val log = Logging(system, getClass)
 
-  lazy val basicPipeline: HttpRequest ⇒ Future[spray.http.HttpResponse] = Await.result(async {
+  private lazy val basicPipeline: HttpRequest ⇒ Future[spray.http.HttpResponse] = Await.result(async {
     await(IO(Http) ? Http.HostConnectorSetup("api.themoviedb.org", port = 80)) match {
       case Http.HostConnectorInfo(connector, _) ⇒
         sendReceive(connector)
@@ -57,7 +58,7 @@ class TMDbClient(apiKey: String) extends TmdbApi {
   lazy val basicPipeline = Await.result(pipeline0, 1.seconds)
   */
 
-  lazy val baseUrl = Await.result(getConfiguration(), 1 seconds).images.base_url
+  private lazy val baseUrl = Await.result(getConfiguration(), 1 seconds).images.base_url
 
   def getConfiguration() = {
     val pipeline = basicPipeline ~> mapErrors ~> unmarshal[Configuration]
@@ -104,13 +105,15 @@ class TMDbClient(apiKey: String) extends TmdbApi {
     Future.sequence(List(result, f))
   }
 
-  val mapErrors = (response: HttpResponse) ⇒ {
+  private val mapErrors = (response: HttpResponse) ⇒ {
     import spray.json._
     if (response.status.isSuccess) response else {
       response.entity.asString.asJson.convertTo[Error] match {
         case e ⇒
-          shutdown
-          throw new RuntimeException(s"[status_code: ${e.status_code}] ${e.status_message}")
+          if (e.status_code == 7)
+            throw new InvalidApiKeyException(message = e.status_message, code = e.status_code)
+          else
+            throw TmdbException(message = e.status_message, code = e.status_code)
       }
     }
   }

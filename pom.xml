@@ -6,7 +6,7 @@
     <packaging>jar</packaging>
     <description>TMDb-async-client</description>
     <url>http://github.com/newca12/TMDb-async-client</url>
-    <version>0.1</version>
+    <version>0.2</version>
     <licenses>
         <license>
             <name>GNU GPL v3</name>

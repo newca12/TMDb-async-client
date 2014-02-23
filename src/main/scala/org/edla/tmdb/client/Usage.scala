@@ -1,8 +1,8 @@
-package org.edla.tmdb
+package org.edla.tmdb.client
 
-import org.edla.tmdb._
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
+
 object Usage extends App {
   import scala.language.postfixOps
 
