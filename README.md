@@ -37,7 +37,7 @@ or add the following lines to your pom.xml file, if you are using [Maven](http:/
    </dependency>
 ```
 
-See [Usage.scala](https://github.com/newca12/TMDb-async-client/blob/master/src/main/scala/org/edla/tmdb/Usage.scala) for a runnable example.
+See [Usage.scala](https://github.com/newca12/TMDb-async-client/blob/master/src/main/scala/org/edla/tmdb/client/Usage.scala) for a runnable example.
 
 Each function returns a `Future` of the response from the TMDb API, parsed into a convenient case class.
 
