@@ -2,7 +2,7 @@ name := "TMDb-async-client"
 
 organization := "org.edla"
 
-version := "0.3"
+version := "0.4"
 
 scalaVersion := "2.10.3"
 
@@ -13,10 +13,10 @@ scalacOptions in (Compile, doc) ++= Seq("-diagrams","-implicits")
 org.scalastyle.sbt.ScalastylePlugin.Settings
 
 libraryDependencies ++= Seq(
-  "com.sandinh" % "spray-client" % "1.3.0",
+  "io.spray" % "spray-client" % "1.3.1",
   "com.typesafe.akka" %% "akka-actor" % "2.3.0",
   "io.spray" %%  "spray-json" % "1.2.5",
-  "org.scala-lang.modules" %% "scala-async" % "0.9.0-M6",  
+  "org.scala-lang.modules" %% "scala-async" % "0.9.0",  
   "junit" % "junit" % "4.11" % "test",
   "org.scalatest" %% "scalatest" % "2.1.0" % "test"
 )

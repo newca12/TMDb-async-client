@@ -7,9 +7,7 @@ import scala.concurrent.Future
 import scala.concurrent.duration.DurationInt
 import scala.language.postfixOps
 import scala.util.Success
-
 import com.typesafe.config.ConfigFactory
-
 import akka.actor.ActorSystem
 import akka.event.Logging
 import akka.io.IO
@@ -28,12 +26,13 @@ import spray.http.Uri
 import spray.httpx.SprayJsonSupport.sprayJsonUnmarshaller
 import spray.util.pimpFuture
 import org.edla.tmdb.api._
+import scala.concurrent.duration.FiniteDuration
 
 object TmdbClient {
-  def apply(apiKey: String) = new TMDbClient(apiKey)
+  def apply(apiKey: String, tmdbTimeOut: FiniteDuration = 5 seconds) = new TmdbClient(apiKey, tmdbTimeOut)
 }
 
-class TMDbClient(apiKey: String) extends TmdbApi {
+class TmdbClient(apiKey: String, tmdbTimeOut: FiniteDuration) extends TmdbApi {
 
   import scala.language.postfixOps
   import system.dispatcher // execution context for futures
@@ -41,8 +40,10 @@ class TMDbClient(apiKey: String) extends TmdbApi {
   import org.edla.tmdb.api.Protocol._
 
   private implicit val system = ActorSystem()
-  private implicit val timeout = Timeout(10.seconds)
+  private implicit val timeout = Timeout(tmdbTimeOut)
   val log = Logging(system, getClass)
+
+  log.info(s"TMDb timeout value is ${tmdbTimeOut}")
 
   private lazy val basicPipeline: HttpRequest ⇒ Future[spray.http.HttpResponse] = Await.result(async {
     await(IO(Http) ? Http.HostConnectorSetup("api.themoviedb.org", port = 80)) match {
@@ -58,7 +59,7 @@ class TMDbClient(apiKey: String) extends TmdbApi {
   lazy val basicPipeline = Await.result(pipeline0, 1.seconds)
   */
 
-  private lazy val baseUrl = Await.result(getConfiguration(), 1 seconds).images.base_url
+  private lazy val baseUrl = Await.result(getConfiguration(), tmdbTimeOut).images.base_url
 
   def getConfiguration() = {
     val pipeline = basicPipeline ~> mapErrors ~> unmarshal[Configuration]
