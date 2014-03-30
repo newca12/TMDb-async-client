@@ -2,9 +2,9 @@ name := "TMDb-async-client"
 
 organization := "org.edla"
 
-version := "0.4"
+version := "0.5"
 
-scalaVersion := "2.10.3"
+scalaVersion := "2.10.4"
 
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-optimize")
 
@@ -14,11 +14,11 @@ org.scalastyle.sbt.ScalastylePlugin.Settings
 
 libraryDependencies ++= Seq(
   "io.spray" % "spray-client" % "1.3.1",
-  "com.typesafe.akka" %% "akka-actor" % "2.3.0",
+  "com.typesafe.akka" %% "akka-actor" % "2.3.1",
   "io.spray" %%  "spray-json" % "1.2.5",
   "org.scala-lang.modules" %% "scala-async" % "0.9.0",  
   "junit" % "junit" % "4.11" % "test",
-  "org.scalatest" %% "scalatest" % "2.1.0" % "test"
+  "org.scalatest" %% "scalatest" % "2.1.2" % "test"
 )
 
 seq(CoverallsPlugin.singleProject: _*)
@@ -67,8 +67,8 @@ pomExtra := (
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.1</version>
 				<configuration>
-					<source>1.7</source>
-					<target>1.7</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 			<plugin>

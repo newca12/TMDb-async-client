@@ -27,6 +27,7 @@ import spray.httpx.SprayJsonSupport.sprayJsonUnmarshaller
 import spray.util.pimpFuture
 import org.edla.tmdb.api._
 import scala.concurrent.duration.FiniteDuration
+import java.net.URLEncoder
 
 object TmdbClient {
   def apply(apiKey: String, tmdbTimeOut: FiniteDuration = 5 seconds) = new TmdbClient(apiKey, tmdbTimeOut)
@@ -78,7 +79,7 @@ class TmdbClient(apiKey: String, tmdbTimeOut: FiniteDuration) extends TmdbApi {
 
   def searchMovie(query: String) = {
     val pipeline = basicPipeline ~> mapErrors ~> unmarshal[Results]
-    pipeline(Get(s"/3/search/movie?api_key=${apiKey}&query=${query}"))
+    pipeline(Get(s"/3/search/movie?api_key=${apiKey}&query=${URLEncoder.encode(query, "UTF-8")}"))
   }
 
   def shutdown(): Unit = {

@@ -6,7 +6,7 @@
     <packaging>jar</packaging>
     <description>TMDb-async-client</description>
     <url>http://github.com/newca12/TMDb-async-client</url>
-    <version>0.4</version>
+    <version>0.5</version>
     <licenses>
         <license>
             <name>GNU GPL v3</name>
@@ -44,8 +44,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.1</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>1.8</source>
+                    <target>1.8</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -91,7 +91,7 @@
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
-            <version>2.10.3</version>
+            <version>2.10.4</version>
         </dependency>
         <dependency>
             <groupId>io.spray</groupId>
@@ -101,7 +101,7 @@
         <dependency>
             <groupId>com.typesafe.akka</groupId>
             <artifactId>akka-actor_2.10</artifactId>
-            <version>2.3.0</version>
+            <version>2.3.1</version>
         </dependency>
         <dependency>
             <groupId>io.spray</groupId>
@@ -122,7 +122,7 @@
         <dependency>
             <groupId>org.scalatest</groupId>
             <artifactId>scalatest_2.10</artifactId>
-            <version>2.1.0</version>
+            <version>2.1.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
