@@ -51,13 +51,13 @@ class TmdbClient(apiKey: String, tmdbTimeOut: FiniteDuration) extends TmdbApi {
       case Http.HostConnectorInfo(connector, _) ⇒
         sendReceive(connector)
     }
-  }, 1.seconds)
+  }, tmdbTimeOut)
   // alternative syntax
   /*  
   val pipeline0 = for (
     Http.HostConnectorInfo(connector, _) ← IO(Http) ? Http.HostConnectorSetup("api.themoviedb.org", port = 80)
   ) yield sendReceive(connector)
-  lazy val basicPipeline = Await.result(pipeline0, 1.seconds)
+  lazy val basicPipeline = Await.result(pipeline0, tmdbTimeOut)
   */
 
   private lazy val baseUrl = Await.result(getConfiguration(), tmdbTimeOut).images.base_url
@@ -72,7 +72,7 @@ class TmdbClient(apiKey: String, tmdbTimeOut: FiniteDuration) extends TmdbApi {
     pipeline(Get(s"/3/authentication/token/new?api_key=${apiKey}"))
   }
 
-  def getMovie(id: Int) = {
+  def getMovie(id: Long) = {
     val pipeline = basicPipeline ~> mapErrors ~> unmarshal[Movie]
     pipeline(Get(s"/3/movie/${id}?api_key=${apiKey}"))
   }
