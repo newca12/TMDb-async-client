@@ -4,7 +4,7 @@ organization := "org.edla"
 
 version := "0.5"
 
-scalaVersion := "2.10.4"
+scalaVersion := "2.11.0"
 
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-optimize")
 
@@ -12,16 +12,20 @@ scalacOptions in (Compile, doc) ++= Seq("-diagrams","-implicits")
 
 org.scalastyle.sbt.ScalastylePlugin.Settings
 
+resolvers += "spray" at "http://repo.spray.io"
+
 libraryDependencies ++= Seq(
-  "io.spray" % "spray-client" % "1.3.1",
-  "com.typesafe.akka" %% "akka-actor" % "2.3.1",
-  "io.spray" %%  "spray-json" % "1.2.5",
-  "org.scala-lang.modules" %% "scala-async" % "0.9.0",  
+  "io.spray" %% "spray-client" % "1.3.1-20140423",
+  "com.typesafe.akka" %% "akka-actor" % "2.3.2",
+  "io.spray" %%  "spray-json" % "1.2.6",
+  "org.scala-lang.modules" %% "scala-async" % "0.9.1",  
   "junit" % "junit" % "4.11" % "test",
-  "org.scalatest" %% "scalatest" % "2.1.2" % "test"
+  "org.scalatest" %% "scalatest" % "2.1.3" % "test"
 )
 
-seq(CoverallsPlugin.singleProject: _*)
+ScoverageSbtPlugin.instrumentSettings
+
+CoverallsPlugin.coverallsSettings
 
 licenses := Seq("GNU GPL v3" -> url("http://www.gnu.org/licenses/gpl.html"))
 
@@ -39,7 +43,7 @@ publishTo := {
 
 publishArtifact in Test := false
 
-pomIncludeRepository := { _ => false }
+//pomIncludeRepository := { _ => false }
 
 pomExtra := (
     <scm>

@@ -110,7 +110,7 @@ class TmdbClient(apiKey: String, tmdbTimeOut: FiniteDuration) extends TmdbApi {
   private val mapErrors = (response: HttpResponse) ⇒ {
     import spray.json._
     if (response.status.isSuccess) response else {
-      response.entity.asString.asJson.convertTo[Error] match {
+      JsonParser(response.entity.asString).convertTo[Error] match {
         case e ⇒
           if (e.status_code == 7)
             throw new InvalidApiKeyException(message = e.status_message, code = e.status_code)
