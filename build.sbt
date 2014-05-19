@@ -2,7 +2,7 @@ name := "TMDb-async-client"
 
 organization := "org.edla"
 
-version := "0.5"
+version := "0.5-SNAPSHOT"
 
 scalaVersion := "2.11.0"
 
@@ -33,13 +33,17 @@ homepage := Some(url("http://github.com/newca12/TMDb-async-client"))
 
 publishMavenStyle := true
 
-publishTo := {
-  val nexus = "https://oss.sonatype.org/"
-  if (isSnapshot.value)
-    Some("snapshots" at nexus + "content/repositories/snapshots")
-  else
-    Some("releases"  at nexus + "service/local/staging/deploy/maven2")
-}
+//publishTo := {
+//  val nexus = "https://oss.sonatype.org/"
+//  if (isSnapshot.value)
+//    Some("snapshots" at nexus + "content/repositories/snapshots")
+//  else
+//    Some("releases"  at nexus + "service/local/staging/deploy/maven2")
+//}
+
+//publishTo := Some(Resolver.file("file",  new File(Path.userHome.absolutePath+"/.m2/repository")))
+
+publishTo := Some(Resolver.file("file",  new File("/PATH_TO_LOCAL_newca12.github.com/snapshots/")))
 
 publishArtifact in Test := false
 

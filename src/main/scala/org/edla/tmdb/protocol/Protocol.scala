@@ -8,7 +8,7 @@ case class Genre(id: Long, name: String)
 case class ProductionCompanie(name: String, id: Long)
 case class SpokenLanguage(iso_639_1: String, name: String)
 case class Collection(poster_path: Option[String], id: Long, name: String, backdrop_path: Option[String])
-case class Movie(runtime: Long, status: String, backdrop_path: Option[String], overview: Option[String], title: String, vote_count: Long,
+case class Movie(runtime: Option[Long], status: String, backdrop_path: Option[String], overview: Option[String], title: String, vote_count: Long,
                  tagline: Option[String], belongs_to_collection: Option[Collection], original_title: String, poster_path: Option[String],
                  production_countries: List[ProductionCountry], revenue: Long, homepage: Option[String], imdb_id: String, id: Long,
                  release_date: String, budget: Long, popularity: Double, genres: List[Genre],

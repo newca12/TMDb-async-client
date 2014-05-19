@@ -6,6 +6,9 @@ import scala.util.Try
 import scala.util.Success
 import scala.util.Failure
 
+//For demonstration purpose only
+//No error handling and Await all around
+
 object Usage extends App {
   import scala.language.postfixOps
 
@@ -23,13 +26,13 @@ object Usage extends App {
       System.exit(1)
   }
 
-  val movie = Await.result(tmdbClient.getMovie(54181), 5 seconds)
-  tmdbClient.log.info(s"OK got a movie ${movie.title}")
-
-  Await.result(tmdbClient.downloadPoster(movie, "/tmp/poster.jpg"), 5 seconds)
-
   val movies = Await.result(tmdbClient.searchMovie("shark"), 5 seconds)
-  for (m ← movies.results) tmdbClient.log.info(s"find ${m.title}")
+  for (m ← movies.results) {
+    tmdbClient.log.info(s"find ${m.id}")
+    val movie = Await.result(tmdbClient.getMovie(m.id), 5 seconds)
+    tmdbClient.log.info(s"OK got a movie ${movie.title}")
+    Await.result(tmdbClient.downloadPoster(movie, s"${System.getProperty("user.home")}/poster-${m.id}.jpg"), 5 seconds)
+  }
 
   tmdbClient.shutdown
 

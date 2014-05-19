@@ -89,7 +89,7 @@ class TmdbClient(apiKey: String, tmdbTimeOut: FiniteDuration) extends TmdbApi {
 
   def downloadPoster(movie: Movie, path: String) = {
     import spray.http.HttpMethods._
-    val url = s"${baseUrl}w154${movie.poster_path}"
+    val url = s"${baseUrl}w154${movie.poster_path.get}"
     log.info(s"Going to download ${url}")
     val result = (IO(Http) ? HttpRequest(GET, Uri(url))).mapTo[HttpResponse]
 

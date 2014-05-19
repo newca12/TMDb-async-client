@@ -16,24 +16,52 @@ You will need an API key to The Movie Database to access the API.  To obtain a k
 3. Select the API section on left side of your account page.
 4. Click on the link to generate a new API key and follow the instructions.
 
-### Usage
+### History ###
 
-Binary release artefacts are published to the [Sonatype OSS Repository Hosting service](https://oss.sonatype.org/index.html#nexus-search;quick~tmdb-async-client) and synced to Maven
-Central.  
+TMDb-async-client =< 0.4 for Scala 2.10 is available on Maven Central but is no longer supported.  
+TMDb-async-client >= 0.5-SNAPSHOT is for Scala 2.11 but is not yet available on Maven Central because Spray [is not yet there either](https://groups.google.com/d/msg/spray-user/OMHBs_rGPG4/sMHa4EnMoLMJ)
+
+### Usage ###
+
+Binary release artefacts are normally published to the [Sonatype OSS Repository Hosting service](https://oss.sonatype.org/index.html#nexus-search;quick~tmdb-async-client) and synced to Maven
+Central but temporarily (waiting for Spray 2.11 release) you need to add external repositories.  
 To import TMDb-async-client as a library in your own Java or Scala projects,  
-add the following line to your build.sbt file, if you are using [SBT](http://www.scala-sbt.org/release/docs/Getting-Started/Setup) to manage the library dependencies of your project:
+add the following lines to your build.sbt file, if you are using [SBT](http://www.scala-sbt.org/release/docs/Getting-Started/Setup) to manage the library dependencies of your project:
 
 ```
-   libraryDependencies += "org.edla" %% "tmdb-async-client" % "0.4"
+resolvers += "spray" at "http://repo.spray.io"
+
+resolvers += "edla repo" at "http://www.edla.org/snapshots"
+```
+
+```
+   libraryDependencies += "org.edla" %% "tmdb-async-client" % "0.5-SNAPSHOT"
 ```
 
 or add the following lines to your pom.xml file, if you are using [Maven](http://maven.apache.org/) instead:
 
 ```
+    <repositories>
+        <repository>
+            <id>spray</id>
+            <name>spray</name>
+            <url>http://repo.spray.io/</url>
+            <layout>default</layout>
+        </repository>
+        <repository>
+            <id>edlarepo</id>
+            <name>edla repo</name>
+            <url>http://www.edla.org/snapshots/</url>
+            <layout>default</layout>
+        </repository>
+    </repositories>
+```
+
+```
    <dependency>
        <groupId>org.edla</groupId>
-       <artifactId>tmdb-async-client_2.10</artifactId>
-       <version>0.4</version>
+       <artifactId>tmdb-async-client_2.11</artifactId>
+       <version>0.5-SNAPSHOT</version>
    </dependency>
 ```
 
