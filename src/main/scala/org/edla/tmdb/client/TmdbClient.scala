@@ -87,6 +87,16 @@ class TmdbClient(apiKey: String, tmdbTimeOut: FiniteDuration) extends TmdbApi {
     system.shutdown()
   }
 
+  def getPoster(movie: Movie) = {
+    import spray.http.HttpMethods._
+    val url = s"${baseUrl}w154${movie.poster_path.get}"
+    log.info(s"Going to download for ${movie.id} ${url}")
+    val result = (IO(Http) ? HttpRequest(GET, Uri(url))).mapTo[HttpResponse]
+    result.flatMap {
+      resp ⇒ Future { resp.entity.data.toByteArray }
+    }
+  }
+
   def downloadPoster(movie: Movie, path: String) = {
     import spray.http.HttpMethods._
     val url = s"${baseUrl}w154${movie.poster_path.get}"
@@ -94,17 +104,15 @@ class TmdbClient(apiKey: String, tmdbTimeOut: FiniteDuration) extends TmdbApi {
     val result = (IO(Http) ? HttpRequest(GET, Uri(url))).mapTo[HttpResponse]
 
     import java.nio.file.{ Paths, Files }
-    import scala.concurrent.future
-
-    val f = Future {
-      result.foreach { response: HttpResponse ⇒
-        val bytes = response.entity.data.toByteArray
-        log.info(s"Got ${bytes.length} bytes")
-        Files.write(Paths.get(path), bytes)
-        log.info("done")
-      }
+    result.flatMap {
+      resp ⇒
+        Future {
+          val bytes = resp.entity.data.toByteArray
+          log.info(s"Got ${bytes.length} bytes")
+          Files.write(Paths.get(path), bytes)
+          log.info("done")
+        }
     }
-    Future.sequence(List(result, f))
   }
 
   private val mapErrors = (response: HttpResponse) ⇒ {
