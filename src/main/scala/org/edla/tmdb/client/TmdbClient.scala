@@ -26,6 +26,7 @@ import spray.http.Uri
 import spray.httpx.SprayJsonSupport.sprayJsonUnmarshaller
 import spray.util.pimpFuture
 import org.edla.tmdb.api._
+import org.edla.tmdb.api.Protocol._
 import scala.concurrent.duration.FiniteDuration
 import java.net.URLEncoder
 
@@ -38,7 +39,6 @@ class TmdbClient(apiKey: String, tmdbTimeOut: FiniteDuration) extends TmdbApi {
   import scala.language.postfixOps
   import system.dispatcher // execution context for futures
   import scala.concurrent.duration._
-  import org.edla.tmdb.api.Protocol._
 
   private implicit val system = ActorSystem()
   private implicit val timeout = Timeout(tmdbTimeOut)
@@ -75,6 +75,11 @@ class TmdbClient(apiKey: String, tmdbTimeOut: FiniteDuration) extends TmdbApi {
   def getMovie(id: Long) = {
     val pipeline = basicPipeline ~> mapErrors ~> unmarshal[Movie]
     pipeline(Get(s"/3/movie/${id}?api_key=${apiKey}"))
+  }
+
+  def getCredits(id: Long) = {
+    val pipeline = basicPipeline ~> mapErrors ~> unmarshal[Credits]
+    pipeline(Get(s"/3/movie/${id}/credits?api_key=${apiKey}"))
   }
 
   def searchMovie(query: String) = {
