@@ -27,6 +27,8 @@ object Protocol extends DefaultJsonProtocol {
 
   case class Error(status_code: Long, status_message: String)
 
+  val noCrew = Crew("", None, 0, "", "Unknown", None)
+
   implicit val authenticateResultFormat = jsonFormat3(AuthenticateResult)
   implicit val productionCountriesFormat = jsonFormat2(ProductionCountry)
   implicit val genreFormat = jsonFormat2(Genre)

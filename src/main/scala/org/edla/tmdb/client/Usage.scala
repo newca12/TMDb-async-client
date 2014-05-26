@@ -5,6 +5,7 @@ import scala.concurrent.duration.DurationInt
 import scala.util.Try
 import scala.util.Success
 import scala.util.Failure
+import org.edla.tmdb.api.Protocol._
 
 //For demonstration purpose only
 //No error handling and Await all around
@@ -26,12 +27,13 @@ object Usage extends App {
       System.exit(1)
   }
 
-  val movies = Await.result(tmdbClient.searchMovie("shark"), 5 seconds)
+  val movies = Await.result(tmdbClient.searchMovie("shark", 1), 5 seconds)
   for (m ← movies.results) {
-    tmdbClient.log.info(s"find ${m.id}")
     val movie = Await.result(tmdbClient.getMovie(m.id), 5 seconds)
-    tmdbClient.log.info(s"OK got a movie ${movie.title}")
-    Await.result(tmdbClient.downloadPoster(movie, s"${System.getProperty("user.home")}/poster-${m.id}.jpg"), 5 seconds)
+    Await.result(tmdbClient.downloadPoster(movie, s"${System.getProperty("user.home")}/poster-${m.id}.jpg"), 9 seconds)
+    val credits = Await.result(tmdbClient.getCredits(m.id), 5 seconds)
+    val director = credits.crew.filter(crew ⇒ crew.job == "Director").headOption
+    tmdbClient.log.info(s"OK got a movie ${movie.title} and Director name is ${director.getOrElse(noCrew).name}")
   }
 
   tmdbClient.shutdown
