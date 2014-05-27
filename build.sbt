@@ -4,7 +4,7 @@ organization := "org.edla"
 
 version := "0.5-SNAPSHOT"
 
-scalaVersion := "2.11.1"
+scalaVersion := "2.11.0"
 
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-optimize")
 
@@ -14,10 +14,13 @@ org.scalastyle.sbt.ScalastylePlugin.Settings
 
 resolvers += "spray" at "http://repo.spray.io"
 
+resolvers += "ConJars" at "http://conjars.org/repo"
+
 libraryDependencies ++= Seq(
   "io.spray" %% "spray-client" % "1.3.1-20140423",
   "com.typesafe.akka" %% "akka-actor" % "2.3.2",
   "io.spray" %%  "spray-json" % "1.2.6",
+  "com.pragmasoft" %% "spray-funnel" % "1.0-RC3-spray1.3" intransitive,
   "org.scala-lang.modules" %% "scala-async" % "0.9.1",  
   "junit" % "junit" % "4.11" % "test",
   "org.scalatest" %% "scalatest" % "2.1.3" % "test"

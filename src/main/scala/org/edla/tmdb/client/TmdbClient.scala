@@ -29,6 +29,11 @@ import org.edla.tmdb.api._
 import org.edla.tmdb.api.Protocol._
 import scala.concurrent.duration.FiniteDuration
 import java.net.URLEncoder
+import com.pragmasoft.reactive.throttling.threshold.Frequency._
+import com.pragmasoft.reactive.throttling.http.client.HttpClientThrottling
+import HttpClientThrottling._
+import com.pragmasoft.reactive.throttling.threshold._
+import spray.http.HttpHeaders.Host
 
 object TmdbClient {
   def apply(apiKey: String, tmdbTimeOut: FiniteDuration = 5 seconds) = new TmdbClient(apiKey, tmdbTimeOut)
@@ -46,19 +51,11 @@ class TmdbClient(apiKey: String, tmdbTimeOut: FiniteDuration) extends TmdbApi {
 
   log.info(s"TMDb timeout value is ${tmdbTimeOut}")
 
-  private lazy val basicPipeline: HttpRequest ⇒ Future[spray.http.HttpResponse] = Await.result(async {
-    await(IO(Http) ? Http.HostConnectorSetup("api.themoviedb.org", port = 80)) match {
-      case Http.HostConnectorInfo(connector, _) ⇒
-        sendReceive(connector)
-    }
-  }, tmdbTimeOut)
-  // alternative syntax
-  /*  
-  val pipeline0 = for (
-    Http.HostConnectorInfo(connector, _) ← IO(Http) ? Http.HostConnectorSetup("api.themoviedb.org", port = 80)
-  ) yield sendReceive(connector)
-  lazy val basicPipeline = Await.result(pipeline0, tmdbTimeOut)
-  */
+  def addHost = { request: HttpRequest ⇒
+    request.withEffectiveUri(false, Host("api.themoviedb.org", 80))
+  }
+
+  val basicPipeline = addHost ~> sendReceive(throttleFrequencyAndParallelRequests(3 perSecond, 20))
 
   private lazy val baseUrl = Await.result(getConfiguration(), tmdbTimeOut).images.base_url
 
