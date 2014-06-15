@@ -36,10 +36,10 @@ import com.pragmasoft.reactive.throttling.threshold._
 import spray.http.HttpHeaders.Host
 
 object TmdbClient {
-  def apply(apiKey: String, tmdbTimeOut: FiniteDuration = 5 seconds) = new TmdbClient(apiKey, tmdbTimeOut)
+  def apply(apiKey: String, language: String = "en", tmdbTimeOut: FiniteDuration = 5 seconds) = new TmdbClient(apiKey, language, tmdbTimeOut)
 }
 
-class TmdbClient(apiKey: String, tmdbTimeOut: FiniteDuration) extends TmdbApi {
+class TmdbClient(apiKey: String, language: String, tmdbTimeOut: FiniteDuration) extends TmdbApi {
 
   import scala.language.postfixOps
   import system.dispatcher // execution context for futures
@@ -71,17 +71,22 @@ class TmdbClient(apiKey: String, tmdbTimeOut: FiniteDuration) extends TmdbApi {
 
   def getMovie(id: Long) = {
     val pipeline = basicPipeline ~> mapErrors ~> unmarshal[Movie]
-    pipeline(Get(s"/3/movie/${id}?api_key=${apiKey}"))
+    pipeline(Get(s"/3/movie/${id}?api_key=${apiKey}&language=${language}"))
   }
 
   def getCredits(id: Long) = {
     val pipeline = basicPipeline ~> mapErrors ~> unmarshal[Credits]
-    pipeline(Get(s"/3/movie/${id}/credits?api_key=${apiKey}"))
+    pipeline(Get(s"/3/movie/${id}/credits?api_key=${apiKey}&language=${language}"))
+  }
+
+  def getReleases(id: Long) = {
+    val pipeline = basicPipeline ~> mapErrors ~> unmarshal[Releases]
+    pipeline(Get(s"/3/movie/${id}/releases?api_key=${apiKey}"))
   }
 
   def searchMovie(query: String, page: Long) = {
     val pipeline = basicPipeline ~> mapErrors ~> unmarshal[Results]
-    pipeline(Get(s"/3/search/movie?api_key=${apiKey}&page=${page}&query=${URLEncoder.encode(query, "UTF-8")}"))
+    pipeline(Get(s"/3/search/movie?api_key=${apiKey}&language=${language}&page=${page}&query=${URLEncoder.encode(query, "UTF-8")}"))
   }
 
   def shutdown(): Unit = {

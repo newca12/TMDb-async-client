@@ -6,6 +6,7 @@ object Protocol extends DefaultJsonProtocol {
 
   case class AuthenticateResult(expires_at: String, request_token: String, success: Boolean)
   case class ProductionCountry(iso_3166_1: String, name: String)
+  case class Release(iso_3166_1: String, certification: String, release_date: String)
   case class Genre(id: Long, name: String)
   case class ProductionCompanie(name: String, id: Long)
   case class SpokenLanguage(iso_639_1: String, name: String)
@@ -24,10 +25,12 @@ object Protocol extends DefaultJsonProtocol {
   case class Cast(cast_id: Long, character: String, credit_id: String, name: String, order: Long, profile_path: Option[String])
   case class Crew(credit_id: String, departement: Option[String], id: Long, job: String, name: String, profile_path: Option[String])
   case class Credits(id: Long, cast: List[Cast], crew: List[Crew])
+  case class Releases(id: Long, countries: List[Release])
 
   case class Error(status_code: Long, status_message: String)
 
   val noCrew = Crew("", None, 0, "", "Unknown", None)
+  val unReleased = Release("", "", "")
 
   implicit val authenticateResultFormat = jsonFormat3(AuthenticateResult)
   implicit val productionCountriesFormat = jsonFormat2(ProductionCountry)
@@ -40,9 +43,11 @@ object Protocol extends DefaultJsonProtocol {
   implicit val resultsFormat = jsonFormat4(Results)
   implicit val imagesFormat = jsonFormat7(Images)
   implicit val configurationFormat = jsonFormat2(Configuration)
-  implicit val CastFormat = jsonFormat6(Cast)
-  implicit val CrewFormat = jsonFormat6(Crew)
-  implicit val CreditsFormat = jsonFormat3(Credits)
+  implicit val castFormat = jsonFormat6(Cast)
+  implicit val crewFormat = jsonFormat6(Crew)
+  implicit val creditsFormat = jsonFormat3(Credits)
+  implicit val release = jsonFormat3(Release)
+  implicit val releases = jsonFormat2(Releases)
   implicit val error = jsonFormat2(Error)
 
 }

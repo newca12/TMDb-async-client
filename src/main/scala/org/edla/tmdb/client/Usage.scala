@@ -15,7 +15,7 @@ object Usage extends App {
 
   val apiKey = "REPLACE_THIS_WITH_YOUR_OWN_API_KEY"
 
-  val tmdbClient = TmdbClient(apiKey)
+  val tmdbClient = TmdbClient(apiKey, "en")
 
   val token = Try(Await.result(tmdbClient.getToken, 5 seconds).request_token)
   token match {
@@ -33,7 +33,9 @@ object Usage extends App {
     Await.result(tmdbClient.downloadPoster(movie, s"${System.getProperty("user.home")}/poster-${m.id}.jpg"), 9 seconds)
     val credits = Await.result(tmdbClient.getCredits(m.id), 5 seconds)
     val director = credits.crew.filter(crew ⇒ crew.job == "Director").headOption
-    tmdbClient.log.info(s"OK got a movie ${movie.title} and Director name is ${director.getOrElse(noCrew).name}")
+    val releases = Await.result(tmdbClient.getReleases(m.id), 5 seconds)
+    val release = releases.countries.filter(country ⇒ country.iso_3166_1 == "US").headOption.getOrElse(unReleased).release_date
+    tmdbClient.log.info(s"OK got a movie ${movie.title}. Director name is ${director.getOrElse(noCrew).name} and US released date is ${release}")
   }
 
   tmdbClient.shutdown

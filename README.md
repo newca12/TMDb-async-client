@@ -2,7 +2,8 @@
 
 ### About ###
 TMDb-async-client is a native Scala SDK that provides asynchronous access to [The Movie Database][1] (TMDb) API.  
-It is built heavily on [spray-client][2] for async non-blocking HTTP I/O and [spray-json][3] for parsing JSON responses into Scala case classes.
+It is built heavily on [spray-client][2] for async non-blocking HTTP I/O and [spray-json][3] for parsing JSON responses into Scala case classes.  
+[spray-funnel][4] is used to allow limitation of client request frequency and number of parallel requests in respect of TMDb policies.
 
 TMDb-async-client is an EDLA project.
 
@@ -88,3 +89,4 @@ Each function returns a `Future` of the response from the TMDb API, parsed into 
 [1]: http://www.themoviedb.org/
 [2]: http://spray.io/documentation/1.2.0/spray-client/
 [3]: https://github.com/spray/spray-json
+[4]: https://github.com/galarragas/spray-funnel
