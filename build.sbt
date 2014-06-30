@@ -12,7 +12,8 @@ scalacOptions in (Compile, doc) ++= Seq("-diagrams","-implicits")
 
 org.scalastyle.sbt.ScalastylePlugin.Settings
 
-//resolvers += "spray" at "http://repo.spray.io"
+//spray-json is not yet available on Maven central
+resolvers += "spray" at "http://repo.spray.io"
 
 resolvers += "ConJars" at "http://conjars.org/repo"
 
