@@ -9,7 +9,7 @@ trait TmdbApi {
   def getConfiguration(): Future[Configuration]
   def getToken(): Future[AuthenticateResult]
   def searchMovie(query: String, page: Long): Future[Results]
-  def downloadPoster(movie: Movie, path: String): Future[Unit]
+  def downloadPoster(movie: Movie, path: String): Future[Boolean]
   def getPoster(movie: Movie): Future[Array[Byte]]
   def shutdown(): Unit
 }

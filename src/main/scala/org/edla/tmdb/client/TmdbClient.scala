@@ -106,19 +106,26 @@ class TmdbClient(apiKey: String, language: String, tmdbTimeOut: FiniteDuration) 
 
   def downloadPoster(movie: Movie, path: String) = {
     import spray.http.HttpMethods._
-    val url = s"${baseUrl}w154${movie.poster_path.get}"
-    log.info(s"Going to download ${url}")
-    val result = (IO(Http) ? HttpRequest(GET, Uri(url))).mapTo[HttpResponse]
+    val posterPath = movie.poster_path
+    if (posterPath.isDefined) {
+      val url = s"${baseUrl}w154${posterPath.get}"
+      log.info(s"Going to download ${url}")
+      val result = (IO(Http) ? HttpRequest(GET, Uri(url))).mapTo[HttpResponse]
 
-    import java.nio.file.{ Paths, Files }
-    result.flatMap {
-      resp ⇒
-        Future {
-          val bytes = resp.entity.data.toByteArray
-          log.info(s"Got ${bytes.length} bytes")
-          Files.write(Paths.get(path), bytes)
-          log.info("done")
-        }
+      import java.nio.file.{ Paths, Files }
+      result.flatMap {
+        resp ⇒
+          Future {
+            val bytes = resp.entity.data.toByteArray
+            log.info(s"Got ${bytes.length} bytes")
+            Files.write(Paths.get(path), bytes)
+            log.info("done")
+            true
+          }
+      }
+    } else Future {
+      log.info("no poster")
+      false
     }
   }
 
