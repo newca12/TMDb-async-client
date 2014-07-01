@@ -20,7 +20,7 @@ You will need an API key to The Movie Database to access the API.  To obtain a k
 ### History ###
 
 TMDb-async-client =< 0.4 for Scala 2.10 is available on Maven Central but is no longer supported.  
-TMDb-async-client >= 0.5-SNAPSHOT is for Scala 2.11 but is not yet available on Maven Central because Spray [is not yet there either](https://groups.google.com/d/msg/spray-user/OMHBs_rGPG4/sMHa4EnMoLMJ)
+TMDb-async-client >= 0.5-SNAPSHOT is for Scala 2.11 but is not yet available on Maven Central because spray-funnel [is not yet there](https://github.com/galarragas/spray-funnel/issues/4) and spray-json is not yet there either.
 
 ### Usage ###
 
