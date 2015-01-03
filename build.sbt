@@ -2,38 +2,29 @@ name := "TMDb-async-client"
 
 organization := "org.edla"
 
-version := "0.5-SNAPSHOT"
+version := "0.6"
 
-scalaVersion := "2.11.1"
+scalaVersion := "2.11.4"
 
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-optimize")
 
 scalacOptions in (Compile, doc) ++= Seq("-diagrams","-implicits")
 
-org.scalastyle.sbt.ScalastylePlugin.Settings
-
-//spray-json is not yet available on Maven central
-resolvers += "spray" at "http://repo.spray.io"
-
 resolvers += "ConJars" at "http://conjars.org/repo"
 
 libraryDependencies ++= Seq(
-  "io.spray" %% "spray-client" % "1.3.1",
-  "com.typesafe.akka" %% "akka-actor" % "2.3.2",
-  "io.spray" %%  "spray-json" % "1.2.6",
-  "com.pragmasoft" %% "spray-funnel" % "1.0-RC3-spray1.3" intransitive,
-  "org.scala-lang.modules" %% "scala-async" % "0.9.1",  
-  "junit" % "junit" % "4.11" % "test",
-  "org.scalatest" %% "scalatest" % "2.1.3" % "test"
+  "io.spray" %% "spray-client" % "1.3.2",
+  "com.typesafe.akka" %% "akka-actor" % "2.3.8",
+  "io.spray" %%  "spray-json" % "1.3.1",
+  "com.pragmasoft" %% "spray-funnel" % "1.0-spray1.3",
+  "org.scala-lang.modules" %% "scala-async" % "0.9.2"
 )
-
-ScoverageSbtPlugin.instrumentSettings
-
-CoverallsPlugin.coverallsSettings
 
 licenses := Seq("GNU GPL v3" -> url("http://www.gnu.org/licenses/gpl.html"))
 
 homepage := Some(url("http://github.com/newca12/TMDb-async-client"))
+
+conflictWarning := ConflictWarning.disable
 
 publishMavenStyle := true
 
@@ -47,7 +38,7 @@ publishMavenStyle := true
 
 //publishTo := Some(Resolver.file("file",  new File(Path.userHome.absolutePath+"/.m2/repository")))
 
-publishTo := Some(Resolver.file("file",  new File("/PATH_TO_LOCAL_newca12.github.com/snapshots/")))
+publishTo := Some(Resolver.file("file",  new File("/PATH_TO_LOCAL_newca12.github.com/releases/")))
 
 publishArtifact in Test := false
 
@@ -77,7 +68,7 @@ pomExtra := (
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
+				<version>3.2</version>
 				<configuration>
 					<source>1.8</source>
 					<target>1.8</target>
@@ -86,30 +77,15 @@ pomExtra := (
 			<plugin>
 				<groupId>net.alchim31.maven</groupId>
 				<artifactId>scala-maven-plugin</artifactId>
-				<version>3.1.6</version>
+				<version>3.2.0</version>
 				<executions>
 					<execution>
 						<id>compile</id>
 						<goals>
 							<goal>compile</goal>
-							<goal>testCompile</goal>
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.16</version>
-				<configuration>
-					<includes>
-						<include>**/*Suite.class</include>
-						<include>**/*Test.class</include>
-						<include>**/*Tests.class</include>
-						<include>**/*Spec.class</include>
-						<include>**/*Specs.class</include>
-					</includes>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>
@@ -118,7 +94,7 @@ pomExtra := (
 			<plugin>
 				<groupId>net.alchim31.maven</groupId>
 				<artifactId>scala-maven-plugin</artifactId>
-				<version>3.1.6</version>
+				<version>3.2.0</version>
 			</plugin>
 		</plugins>
 	</reporting>

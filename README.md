@@ -20,7 +20,7 @@ You will need an API key to The Movie Database to access the API.  To obtain a k
 ### History ###
 
 TMDb-async-client =< 0.4 for Scala 2.10 is available on Maven Central but is no longer supported.  
-TMDb-async-client >= 0.5-SNAPSHOT is for Scala 2.11 but is not yet available on Maven Central because spray-funnel [is not yet there](https://github.com/galarragas/spray-funnel/issues/4) and spray-json is not yet there either.
+TMDb-async-client >= 0.5 is for Scala 2.11 but is not yet available on Maven Central because spray-funnel [is not yet there](https://github.com/galarragas/spray-funnel/issues/4).
 
 ### Usage ###
 
@@ -30,13 +30,11 @@ To import TMDb-async-client as a library in your own Java or Scala projects,
 add the following lines to your build.sbt file, if you are using [SBT](http://www.scala-sbt.org/release/docs/Getting-Started/Setup) to manage the library dependencies of your project:
 
 ```
-resolvers += "spray" at "http://repo.spray.io"
-
-resolvers += "edla repo" at "http://www.edla.org/snapshots"
+resolvers += "edla repo" at "http://www.edla.org/releases"
 ```
 
 ```
-   libraryDependencies += "org.edla" %% "tmdb-async-client" % "0.5-SNAPSHOT"
+   libraryDependencies += "org.edla" %% "tmdb-async-client" % "0.6"
 ```
 
 or add the following lines to your pom.xml file, if you are using [Maven](http://maven.apache.org/) instead:
@@ -52,7 +50,7 @@ or add the following lines to your pom.xml file, if you are using [Maven](http:/
         <repository>
             <id>edlarepo</id>
             <name>edla repo</name>
-            <url>http://www.edla.org/snapshots/</url>
+            <url>http://www.edla.org/releases/</url>
             <layout>default</layout>
         </repository>
     </repositories>
@@ -62,7 +60,7 @@ or add the following lines to your pom.xml file, if you are using [Maven](http:/
    <dependency>
        <groupId>org.edla</groupId>
        <artifactId>tmdb-async-client_2.11</artifactId>
-       <version>0.5-SNAPSHOT</version>
+       <version>0.6</version>
    </dependency>
 ```
 
@@ -84,9 +82,9 @@ Each function returns a `Future` of the response from the TMDb API, parsed into 
   tmdbClient.shutdown
 ```
 ### License ###
-© 2014 Olivier ROLAND. Distributed under the GPLv3 License.
+© 2014-2015 Olivier ROLAND. Distributed under the GPLv3 License.
 
 [1]: http://www.themoviedb.org/
-[2]: http://spray.io/documentation/1.2.0/spray-client/
+[2]: http://spray.io/documentation/1.2.2/spray-client/
 [3]: https://github.com/spray/spray-json
 [4]: https://github.com/galarragas/spray-funnel
