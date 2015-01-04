@@ -6,7 +6,7 @@
     <packaging>jar</packaging>
     <description>TMDb-async-client</description>
     <url>http://github.com/newca12/TMDb-async-client</url>
-    <version>0.6</version>
+    <version>0.7</version>
     <licenses>
         <license>
             <name>GNU GPL v3</name>
@@ -97,6 +97,12 @@
             <groupId>com.pragmasoft</groupId>
             <artifactId>spray-funnel_2.11</artifactId>
             <version>1.0-spray1.3</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.spray</groupId>
+                    <artifactId>spray-client</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.scala-lang.modules</groupId>

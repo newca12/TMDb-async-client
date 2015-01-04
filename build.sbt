@@ -2,7 +2,7 @@ name := "TMDb-async-client"
 
 organization := "org.edla"
 
-version := "0.6"
+version := "0.7"
 
 scalaVersion := "2.11.4"
 
@@ -16,7 +16,7 @@ libraryDependencies ++= Seq(
   "io.spray" %% "spray-client" % "1.3.2",
   "com.typesafe.akka" %% "akka-actor" % "2.3.8",
   "io.spray" %%  "spray-json" % "1.3.1",
-  "com.pragmasoft" %% "spray-funnel" % "1.0-spray1.3",
+  "com.pragmasoft" %% "spray-funnel" % "1.0-spray1.3" exclude("io.spray", "spray-client"),
   "org.scala-lang.modules" %% "scala-async" % "0.9.2"
 )
 
@@ -24,7 +24,7 @@ licenses := Seq("GNU GPL v3" -> url("http://www.gnu.org/licenses/gpl.html"))
 
 homepage := Some(url("http://github.com/newca12/TMDb-async-client"))
 
-conflictWarning := ConflictWarning.disable
+//conflictWarning := ConflictWarning.disable
 
 publishMavenStyle := true
 
@@ -36,9 +36,9 @@ publishMavenStyle := true
 //    Some("releases"  at nexus + "service/local/staging/deploy/maven2")
 //}
 
-//publishTo := Some(Resolver.file("file",  new File(Path.userHome.absolutePath+"/.m2/repository")))
+publishTo := Some(Resolver.file("file",  new File(Path.userHome.absolutePath+"/.m2/repository")))
 
-publishTo := Some(Resolver.file("file",  new File("/PATH_TO_LOCAL_newca12.github.com/releases/")))
+//publishTo := Some(Resolver.file("file",  new File("/PATH_TO_LOCAL_newca12.github.com/releases/")))
 
 publishArtifact in Test := false
 

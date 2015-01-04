@@ -1,8 +1,5 @@
---- 
 language: scala
 jdk: 
 - oraclejdk8
 scala: 
-- 2.11.1
-after_success:
-- "sbt coveralls"
+- 2.11.4
