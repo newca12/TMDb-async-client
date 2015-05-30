@@ -36,7 +36,7 @@ resolvers += "ConJars" at "http://conjars.org/repo"
 ```
 
 ```
-   libraryDependencies += "org.edla" %% "tmdb-async-client" % "0.7"
+   libraryDependencies += "org.edla" %% "tmdb-async-client" % "0.8"
 ```
 
 or add the following lines to your pom.xml file, if you are using [Maven](http://maven.apache.org/) instead:
@@ -62,7 +62,7 @@ or add the following lines to your pom.xml file, if you are using [Maven](http:/
    <dependency>
        <groupId>org.edla</groupId>
        <artifactId>tmdb-async-client_2.11</artifactId>
-       <version>0.7</version>
+       <version>0.8</version>
    </dependency>
 ```
 
@@ -87,6 +87,6 @@ Each function returns a `Future` of the response from the TMDb API, parsed into 
 © 2014-2015 Olivier ROLAND. Distributed under the GPLv3 License.
 
 [1]: http://www.themoviedb.org/
-[2]: http://spray.io/documentation/1.2.2/spray-client/
+[2]: http://spray.io/documentation/1.3.3/spray-client/
 [3]: https://github.com/spray/spray-json
 [4]: https://github.com/galarragas/spray-funnel

@@ -14,11 +14,11 @@ object Protocol extends DefaultJsonProtocol {
   case class Movie(runtime: Option[Long], status: String, backdrop_path: Option[String], overview: Option[String], title: String, vote_count: Long,
                    tagline: Option[String], belongs_to_collection: Option[Collection], original_title: String, poster_path: Option[String],
                    production_countries: List[ProductionCountry], revenue: Long, homepage: Option[String], imdb_id: String, id: Long,
-                   release_date: String, budget: Long, popularity: Double, genres: List[Genre],
+                   release_date: Option[String], budget: Long, popularity: Double, genres: List[Genre],
                    production_companies: List[ProductionCompanie], adult: Boolean, spoken_languages: List[SpokenLanguage])
-  case class Result(original_title: String, poster_path: Option[String], release_date: String, id: Long, adult: Boolean, title: String,
+  case class Result(original_title: String, poster_path: Option[String], release_date: Option[String], id: Long, adult: Boolean, title: String,
                     popularity: Double, vote_count: Long, vote_average: Long, backdrop_path: Option[String])
-  case class Results(total_results: Long, results: List[Result], page: Long, total_pages: Long)
+  case class Results(total_results: Int, results: List[Result], page: Int, total_pages: Int)
   case class Images(still_sizes: List[String], poster_sizes: List[String], base_url: String, profile_sizes: List[String],
                     secure_base_url: String, logo_sizes: List[String], backdrop_sizes: List[String])
   case class Configuration(images: Images, change_keys: List[String])
@@ -30,7 +30,7 @@ object Protocol extends DefaultJsonProtocol {
   case class Error(status_code: Long, status_message: String)
 
   val noCrew = Crew("", None, 0, "", "Unknown", None)
-  val unReleased = Release("", "", "")
+  val unReleased = Release("", "", "Unknown")
 
   implicit val authenticateResultFormat = jsonFormat3(AuthenticateResult)
   implicit val productionCountriesFormat = jsonFormat2(ProductionCountry)

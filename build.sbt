@@ -2,9 +2,9 @@ name := "TMDb-async-client"
 
 organization := "org.edla"
 
-version := "0.7"
+version := "0.8"
 
-scalaVersion := "2.11.4"
+scalaVersion := "2.11.6"
 
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature", "-optimize")
 
@@ -13,9 +13,9 @@ scalacOptions in (Compile, doc) ++= Seq("-diagrams","-implicits")
 resolvers += "ConJars" at "http://conjars.org/repo"
 
 libraryDependencies ++= Seq(
-  "io.spray" %% "spray-client" % "1.3.2",
-  "com.typesafe.akka" %% "akka-actor" % "2.3.8",
-  "io.spray" %%  "spray-json" % "1.3.1",
+  "io.spray" %% "spray-client" % "1.3.3",
+  "com.typesafe.akka" %% "akka-actor" % "2.3.11",
+  "io.spray" %%  "spray-json" % "1.3.2",
   "com.pragmasoft" %% "spray-funnel" % "1.0-spray1.3" exclude("io.spray", "spray-client"),
   "org.scala-lang.modules" %% "scala-async" % "0.9.2"
 )

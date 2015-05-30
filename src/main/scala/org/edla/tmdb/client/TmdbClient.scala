@@ -84,7 +84,7 @@ class TmdbClient(apiKey: String, language: String, tmdbTimeOut: FiniteDuration) 
     pipeline(Get(s"/3/movie/${id}/releases?api_key=${apiKey}"))
   }
 
-  def searchMovie(query: String, page: Long) = {
+  def searchMovie(query: String, page: Int) = {
     val pipeline = basicPipeline ~> mapErrors ~> unmarshal[Results]
     pipeline(Get(s"/3/search/movie?api_key=${apiKey}&language=${language}&page=${page}&query=${URLEncoder.encode(query, "UTF-8")}"))
   }
