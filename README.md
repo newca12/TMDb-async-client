@@ -2,8 +2,8 @@
 
 ### About ###
 TMDb-async-client is a native Scala SDK that provides asynchronous access to [The Movie Database][1] (TMDb) API.  
-It is built heavily on [spray-client][2] for async non-blocking HTTP I/O and [spray-json][3] for parsing JSON responses into Scala case classes.  
-[spray-funnel][4] is used to allow limitation of client request frequency and number of parallel requests in respect of TMDb policies.
+It is built heavily on [akka-http][2] for async non-blocking HTTP I/O and [spray-json][3] for parsing JSON responses into Scala case classes.  
+[akka-stream][4] is used to allow limitation of client request frequency and number of parallel requests in respect of TMDb policies.
 
 TMDb-async-client is an EDLA project.
 
@@ -17,52 +17,22 @@ You will need an API key to The Movie Database to access the API.  To obtain a k
 3. Select the API section on left side of your account page.
 4. Click on the link to generate a new API key and follow the instructions.
 
-### History ###
-
-TMDb-async-client =< 0.4 for Scala 2.10 is available on Maven Central but is no longer supported.  
-TMDb-async-client >= 0.5 is for Scala 2.11 but is not yet available on Maven Central because spray-funnel [is not yet there](https://github.com/galarragas/spray-funnel/issues/4).
-
 ### Usage ###
 
-Binary release artefacts are normally published to the [Sonatype OSS Repository Hosting service](https://oss.sonatype.org/index.html#nexus-search;quick~tmdb-async-client) and synced to Maven
-Central but temporarily (waiting for Spray 2.11 release) you need to add external repositories.  
 To import TMDb-async-client as a library in your own Java or Scala projects,  
 add the following lines to your build.sbt file, if you are using [SBT](http://www.scala-sbt.org/release/docs/Getting-Started/Setup) to manage the library dependencies of your project:
 
 ```
-resolvers += "edla" at "http://www.edla.org/releases"
-
-resolvers += "ConJars" at "http://conjars.org/repo"
-```
-
-```
-   libraryDependencies += "org.edla" %% "tmdb-async-client" % "0.8"
+   libraryDependencies += "org.edla" %% "tmdb-async-client" % "1.0.0"
 ```
 
 or add the following lines to your pom.xml file, if you are using [Maven](http://maven.apache.org/) instead:
 
 ```
-    <repositories>
-        <repository>
-            <id>edla</id>
-            <name>edla</name>
-            <url>http://www.edla.org/releases/</url>
-            <layout>default</layout>
-        </repository>
-        <repository>
-            <id>ConJars</id>
-            <name>ConJars</name>
-            <url>http://conjars.org/repo/</url>
-            <layout>default</layout>
-        </repository>
-    </repositories>
-```
-
-```
    <dependency>
        <groupId>org.edla</groupId>
        <artifactId>tmdb-async-client_2.11</artifactId>
-       <version>0.8</version>
+       <version>1.0.0</version>
    </dependency>
 ```
 
@@ -87,6 +57,6 @@ Each function returns a `Future` of the response from the TMDb API, parsed into 
 © 2014-2015 Olivier ROLAND. Distributed under the GPLv3 License.
 
 [1]: http://www.themoviedb.org/
-[2]: http://spray.io/documentation/1.3.3/spray-client/
-[3]: https://github.com/spray/spray-json
-[4]: https://github.com/galarragas/spray-funnel
+[2]: http://doc.akka.io/docs/akka-stream-and-http-experimental/snapshot/scala.html
+[3]: http://doc.akka.io/docs/akka-stream-and-http-experimental/snapshot/scala/http/common/json-support.html
+[4]: http://doc.akka.io/docs/akka-stream-and-http-experimental/snapshot/scala/stream-cookbook.html#Globally_limiting_the_rate_of_a_set_of_streams

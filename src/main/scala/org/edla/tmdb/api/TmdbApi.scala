@@ -10,6 +10,6 @@ trait TmdbApi {
   def getToken(): Future[AuthenticateResult]
   def searchMovie(query: String, page: Int): Future[Results]
   def downloadPoster(movie: Movie, path: String): Future[Boolean]
-  def getPoster(movie: Movie): Future[Array[Byte]]
+  def getPoster(movie: Movie): Future[akka.stream.scaladsl.Source[akka.util.ByteString, Any]]
   def shutdown(): Unit
 }
