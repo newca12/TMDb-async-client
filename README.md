@@ -23,7 +23,7 @@ To import TMDb-async-client as a library in your own Java or Scala projects,
 add the following lines to your build.sbt file, if you are using [SBT](http://www.scala-sbt.org/release/docs/Getting-Started/Setup) to manage the library dependencies of your project:
 
 ```
-   libraryDependencies += "org.edla" %% "tmdb-async-client" % "1.0.0"
+   libraryDependencies += "org.edla" %% "tmdb-async-client" % "1.0.1"
 ```
 
 or add the following lines to your pom.xml file, if you are using [Maven](http://maven.apache.org/) instead:
@@ -32,7 +32,7 @@ or add the following lines to your pom.xml file, if you are using [Maven](http:/
    <dependency>
        <groupId>org.edla</groupId>
        <artifactId>tmdb-async-client_2.11</artifactId>
-       <version>1.0.0</version>
+       <version>1.0.1</version>
    </dependency>
 ```
 
