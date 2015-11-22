@@ -1,37 +1,25 @@
 package org.edla.tmdb.client
 
-import akka.http.scaladsl.Http
-import akka.http.scaladsl.model.HttpRequest
-import akka.stream.scaladsl.Sink
-import akka.stream.scaladsl.Source
-import akka.stream.scaladsl.Flow
-import scala.concurrent.Future
-import akka.http.scaladsl.model.HttpResponse
-import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
-import java.io.IOException
-import akka.http.scaladsl.client.RequestBuilding
-import akka.http.scaladsl.unmarshalling.Unmarshal
-import akka.http.scaladsl.model.StatusCodes._
-import akka.http.scaladsl.server.Directives._
-import spray.json.DefaultJsonProtocol
-import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
-import akka.http.scaladsl.unmarshalling.Unmarshal
-import scala.concurrent.Await
-import scala.Left
-import scala.Right
-import scala.concurrent.duration.DurationInt
-import org.edla.tmdb.api._
-import org.edla.tmdb.api.Protocol._
-import scala.concurrent.duration.FiniteDuration
-import akka.event.Logging
-import akka.util.Timeout
-import akka.util.Timeout.durationToTimeout
+import java.io.{ File, FileOutputStream }
 import java.net.URLEncoder
-import java.io.{ FileOutputStream, File }
-import scala.concurrent.duration._
-import akka.actor.ActorRef
-import akka.stream.scaladsl.Flow
+import scala.concurrent.{ Await, Future }
+import scala.concurrent.duration.{ Duration, DurationInt, FiniteDuration, SECONDS }
+import org.edla.tmdb.api.Protocol.{ AuthenticateResult, Configuration, Credits, Error, Movie, Releases, Results }
+import org.edla.tmdb.api.TmdbApi
+import akka.actor.{ ActorRef, ActorSystem }
+import akka.event.Logging
+import akka.http.scaladsl.Http
+import akka.http.scaladsl.client.RequestBuilding
+import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport.sprayJsonUnmarshaller
+import akka.http.scaladsl.model.{ HttpRequest, HttpResponse }
+import akka.http.scaladsl.model.Uri.apply
+import akka.http.scaladsl.unmarshalling.Unmarshal
+import akka.pattern.ask
+import akka.stream.ActorMaterializer
+import akka.stream.scaladsl.{ Flow, Sink, Source }
+import akka.util.Timeout
+import akka.stream.ActorMaterializerSettings
+import java.util.concurrent.CountDownLatch
 
 object TmdbClient {
   def apply(apiKey: String, language: String = "en", tmdbTimeOut: FiniteDuration = 10 seconds) = new TmdbClient(apiKey, language, tmdbTimeOut)
@@ -41,13 +29,19 @@ class TmdbClient(apiKey: String, language: String, tmdbTimeOut: FiniteDuration) 
 
   implicit val system = ActorSystem()
   implicit val executor = system.dispatcher
-  implicit val materializer = ActorMaterializer()
+  implicit val materializer = ActorMaterializer(
+    ActorMaterializerSettings(system)
+      .withInputBuffer(
+        initialSize = 1,
+        maxSize = 1
+      )
+  )
   private implicit val timeout = Timeout(tmdbTimeOut)
   val log = Logging(system, getClass)
 
   log.info(s"TMDb timeout value is ${tmdbTimeOut}")
 
-  val limiterProps = Limiter.props(maxAvailableTokens = 30, tokenRefreshPeriod = new FiniteDuration(10, SECONDS), tokenRefreshAmount = 30)
+  val limiterProps = Limiter.props(maxAvailableTokens = 10, tokenRefreshPeriod = new FiniteDuration(5, SECONDS), tokenRefreshAmount = 10)
   val limiter = system.actorOf(limiterProps, name = "testLimiter")
 
   lazy val tmdbConnectionFlow: Flow[HttpRequest, HttpResponse, Future[Http.OutgoingConnection]] =
@@ -85,13 +79,12 @@ class TmdbClient(apiKey: String, language: String, tmdbTimeOut: FiniteDuration) 
   def tmdbRequest(request: HttpRequest): Future[HttpResponse] =
     Source.single(request).via(limitGlobal(limiter)).via(tmdbConnectionFlow).via(errorHandling) runWith (Sink.head)
 
-  /*  private lazy val baseUrl = Await.result(getConfiguration(), tmdbTimeOut) match {
-    case Right(conf)        ⇒ conf.images.base_url
-    case Left(errorMessage) ⇒ log.error(errorMessage.toString)
-
-  }*/
-
   private lazy val baseUrl = Await.result(getConfiguration(), tmdbTimeOut).images.base_url
+
+  //could not find implicit value for parameter um:
+  /*    def generic[T](request: String): Future[T] = tmdbRequest(RequestBuilding.Get(request)).flatMap {
+      response ⇒ Unmarshal(response.entity).to[T]
+    }*/
 
   def getConfiguration(): Future[Configuration] = {
     tmdbRequest(RequestBuilding.Get(s"/3/configuration?api_key=${apiKey}")).flatMap {
@@ -102,11 +95,6 @@ class TmdbClient(apiKey: String, language: String, tmdbTimeOut: FiniteDuration) 
   def getToken(): Future[AuthenticateResult] = tmdbRequest(RequestBuilding.Get(s"/3/authentication/token/new?api_key=${apiKey}")).flatMap {
     response ⇒ Unmarshal(response.entity).to[AuthenticateResult]
   }
-
-  //could not find implicit value for parameter um: 
-  /*    def generic[T](request: String): Future[T] = tmdbRequest(RequestBuilding.Get(request)).flatMap {
-      response ⇒ Unmarshal(response.entity).to[T]
-    }*/
 
   def getMovie(id: Long): Future[Movie] = {
     tmdbRequest(RequestBuilding.Get(s"/3/movie/${id}?api_key=${apiKey}&language=${language}")).flatMap {
@@ -140,39 +128,25 @@ class TmdbClient(apiKey: String, language: String, tmdbTimeOut: FiniteDuration) 
     ()
   }
 
-  def getPoster(movie: Movie) = {
-    val url = s"${baseUrl}w154${movie.poster_path.get}"
-    log.info(s"Going to download for ${movie.id} ${url}")
-    val result: Future[HttpResponse] = Http().singleRequest(HttpRequest(uri = url)).mapTo[HttpResponse]
-    result.flatMap {
-      resp ⇒ Future { resp.entity.dataBytes }
-    }
-  }
-
   def downloadPoster(movie: Movie, path: String) = {
     val posterPath = movie.poster_path
     if (posterPath.isDefined) {
       val url = s"${baseUrl}w154${posterPath.get}"
-      log.info(s"Going to download ${url}")
       val result: Future[HttpResponse] = Http().singleRequest(HttpRequest(uri = url)).mapTo[HttpResponse]
-
-      import java.nio.file.{ Paths, Files }
       result.flatMap {
         resp ⇒
-          Future {
-            val file = new File(path)
-            val outputStream = new FileOutputStream(file)
+          val latch = new CountDownLatch(1)
+          val file = new File(path)
+          val outputStream = new FileOutputStream(file)
+          val res = Future {
             resp.entity.dataBytes.runForeach({ byteString ⇒
               outputStream.write(byteString.toByteBuffer.array())
-            }).onComplete(_ ⇒ outputStream.close())
-            //log.info(s"Got ${bytes.length} bytes")
-            //Files.write(Paths.get(path), bytes)
-            log.info("done")
-            true
+            }).onComplete { _ ⇒ outputStream.close(); latch.countDown() }
           }
+          latch.await()
+          res.map(_ ⇒ true)
       }
     } else Future {
-      log.info("no poster")
       false
     }
   }

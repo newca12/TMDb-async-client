@@ -1,7 +1,8 @@
 package org.edla.tmdb.api
 
 import scala.concurrent.Future
-import Protocol._
+
+import Protocol.{ AuthenticateResult, Configuration, Credits, Movie, Results }
 
 trait TmdbApi {
   def getMovie(id: Long): Future[Movie]
@@ -10,6 +11,5 @@ trait TmdbApi {
   def getToken(): Future[AuthenticateResult]
   def searchMovie(query: String, page: Int): Future[Results]
   def downloadPoster(movie: Movie, path: String): Future[Boolean]
-  def getPoster(movie: Movie): Future[akka.stream.scaladsl.Source[akka.util.ByteString, Any]]
   def shutdown(): Unit
 }
