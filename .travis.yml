@@ -6,5 +6,8 @@ scala:
 sudo: false
 
 # codecov
-before_install: pip install --user codecov
-after_success: codecov
+script:
+  - sbt clean coverage test
+
+after_success:
+  - pip install --user codecov && codecov
