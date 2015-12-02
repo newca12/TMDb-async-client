@@ -3,7 +3,7 @@ package org.edla.tmdb
 import scala.concurrent.duration.DurationInt
 import org.edla.tmdb.client.TmdbClient
 import org.scalatest.{ Finders, Matchers, PropSpec }
-import org.scalatest.time.{Seconds, Span}
+import org.scalatest.time.{ Seconds, Span }
 import org.scalatest.concurrent.ScalaFutures.{ convertScalaFuture, patienceConfig, whenReady }
 import org.scalatest._
 import org.scalatest.time._
@@ -16,8 +16,8 @@ class FullTestKitExampleSpec extends PropSpec with Matchers with ScalaFutures {
   val tmdbClient = TmdbClient(apiKey, "en")
 
   implicit val timeout = 10 seconds
-  
- implicit val defaultPatience = PatienceConfig(timeout = Span(5, Seconds), interval = Span(1, Seconds))
+
+  implicit val defaultPatience = PatienceConfig(timeout = Span(5, Seconds), interval = Span(1, Seconds))
 
   property("Authentication should be successfull") {
     whenReady(tmdbClient.getToken) { s ⇒
