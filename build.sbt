@@ -26,7 +26,6 @@ libraryDependencies ++= {
     "com.typesafe.akka" %% "akka-http-core-experimental" % akkaStreamV,
     "com.typesafe.akka" %% "akka-http-experimental" % akkaStreamV,
     "com.typesafe.akka" %% "akka-http-spray-json-experimental" % akkaStreamV,
-    "com.typesafe.akka" %% "akka-stream-testkit-experimental" % akkaStreamV % "test",
     "org.scalatest" %% "scalatest" % "2.2.4" % "test"
   )
 }
