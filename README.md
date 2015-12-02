@@ -1,4 +1,4 @@
-# TMDb-async-client [![Build Status](https://travis-ci.org/newca12/TMDb-async-client.svg?branch=master)](https://travis-ci.org/newca12/TMDb-async-client) [![Coverage Status](https://coveralls.io/repos/newca12/TMDb-async-client/badge.png)](https://coveralls.io/r/newca12/TMDb-async-client) [![Ohloh](http://www.ohloh.net/p/TMDb-async-client/widgets/project_thin_badge.gif)](https://www.ohloh.net/p/TMDb-async-client)
+# TMDb-async-client [![Build Status](https://travis-ci.org/newca12/TMDb-async-client.svg?branch=master)](https://travis-ci.org/newca12/TMDb-async-client) [![codecov.io](https://codecov.io/github/newca12/TMDb-async-client/coverage.svg?branch=master)](https://codecov.io/github/newca12/TMDb-async-client?branch=master) [![Ohloh](http://www.ohloh.net/p/TMDb-async-client/widgets/project_thin_badge.gif)](https://www.ohloh.net/p/TMDb-async-client)
 
 ### About ###
 TMDb-async-client is a native Scala SDK that provides asynchronous access to [The Movie Database][1] (TMDb) API.  
@@ -23,7 +23,7 @@ To import TMDb-async-client as a library in your own Java or Scala projects,
 add the following lines to your build.sbt file, if you are using [SBT](http://www.scala-sbt.org/release/docs/Getting-Started/Setup) to manage the library dependencies of your project:
 
 ```
-   libraryDependencies += "org.edla" %% "tmdb-async-client" % "1.0.1"
+   libraryDependencies += "org.edla" %% "tmdb-async-client" % "1.0.2"
 ```
 
 or add the following lines to your pom.xml file, if you are using [Maven](http://maven.apache.org/) instead:
@@ -32,7 +32,7 @@ or add the following lines to your pom.xml file, if you are using [Maven](http:/
    <dependency>
        <groupId>org.edla</groupId>
        <artifactId>tmdb-async-client_2.11</artifactId>
-       <version>1.0.1</version>
+       <version>1.0.2</version>
    </dependency>
 ```
 
@@ -53,6 +53,11 @@ Each function returns a `Future` of the response from the TMDb API, parsed into 
 
   tmdbClient.shutdown
 ```
+
+### Developers ###
+
+API Key need to be available as an environment variable named apiKey if you want to run sbt test
+
 ### License ###
 © 2014-2015 Olivier ROLAND. Distributed under the GPLv3 License.
 

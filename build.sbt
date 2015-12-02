@@ -1,6 +1,6 @@
 name := "TMDb-async-client"
 organization := "org.edla"
-version := "1.0.1"
+version := "1.0.2"
 scalaVersion := "2.11.7"
 scalacOptions ++= Seq(
   "-language:postfixOps", "-language:existentials", "-language:implicitConversions",
@@ -18,15 +18,16 @@ scalacOptions ++= Seq(
 )
 scalacOptions in (Compile, doc) ++= Seq("-diagrams", "-implicits")
 libraryDependencies ++= {
-  val akkaStreamV = "2.0-M1"
+  val akkaStreamV = "2.0-M2"
   Seq(
-    "com.typesafe.akka" %% "akka-actor" % "2.4.0",
+    "org.scala-lang.modules" %% "scala-async" % "0.9.5",
+    "com.typesafe.akka" %% "akka-actor" % "2.4.1",
     "com.typesafe.akka" %% "akka-stream-experimental" % akkaStreamV,
     "com.typesafe.akka" %% "akka-http-core-experimental" % akkaStreamV,
     "com.typesafe.akka" %% "akka-http-experimental" % akkaStreamV,
     "com.typesafe.akka" %% "akka-http-spray-json-experimental" % akkaStreamV,
-    "com.typesafe.akka" %% "akka-http-testkit-experimental" % akkaStreamV,
-    "org.scala-lang.modules" %% "scala-async" % "0.9.5"
+    "com.typesafe.akka" %% "akka-http-testkit-experimental" % akkaStreamV % "test",
+    "org.scalatest" %% "scalatest" % "2.2.4" % "test"
   )
 }
 licenses := Seq("GNU GPL v3" -> url("http://www.gnu.org/licenses/gpl.html"))

@@ -2,19 +2,14 @@ package org.edla.tmdb.client
 
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
-import scala.util.Try
-import scala.util.Success
-import scala.util.Failure
-import org.edla.tmdb.api.Protocol._
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent._
-import scala.concurrent.duration.Duration
+import scala.util.{ Failure, Success, Try }
+
+import org.edla.tmdb.api.Protocol.{ noCrew, unReleased }
 
 //For demonstration purpose only
 //No error handling and Await all around
 
 object Usage extends App {
-  import scala.language.postfixOps
 
   //val apiKey = sys.env("apiKey")
   val apiKey = "REPLACE_THIS_WITH_YOUR_OWN_API_KEY"
