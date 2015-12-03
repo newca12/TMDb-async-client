@@ -11,8 +11,9 @@ import org.scalatest.concurrent.ScalaFutures
 import java.nio.file.Paths
 import java.nio.file.Files
 import org.edla.tmdb.client.InvalidApiKeyException
+import java.io.File
 
-class FullTestKitExampleSpec extends PropSpec with Matchers with ScalaFutures with GivenWhenThen {
+class TmdbAsyncClientTest extends PropSpec with Matchers with ScalaFutures with GivenWhenThen {
 
   val apiKey = sys.env("apiKey")
 
@@ -41,14 +42,14 @@ class FullTestKitExampleSpec extends PropSpec with Matchers with ScalaFutures wi
   }
 
   property("Get title from movie.id should be correct") {
-    val fileName = "/tmp/poster.jpg"
+    val fileName = s"${System.getProperty("java.io.tmpdir")}${File.separator}poster.jpg"
     whenReady(tmdbClient.getMovie(680)) { movie ⇒
       movie.title should be("Pulp Fiction")
-      Then("the corresponding poster should be downloaded successfully")
+      Then("the poster should be downloaded successfully")
       whenReady(tmdbClient.downloadPoster(movie, fileName)) { result ⇒
         result should be(true)
       }
-      And("poster should be OK")
+      And("the poster should be OK")
       Files.size(Paths.get(fileName)) should be(14982)
     }
   }

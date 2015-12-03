@@ -2,6 +2,7 @@ name := "TMDb-async-client"
 organization := "org.edla"
 version := "1.0.2"
 scalaVersion := "2.11.7"
+coverageExcludedPackages := "org.edla.tmdb.client.Usage"
 scalacOptions ++= Seq(
   "-language:postfixOps", "-language:existentials", "-language:implicitConversions",
   //"-optimize",
