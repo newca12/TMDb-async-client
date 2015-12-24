@@ -29,7 +29,7 @@ class TmdbAsyncClientTest extends PropSpec with Matchers with ScalaFutures with 
     }
   }
 
-  property("Authentication with invalid API key should be successfull") {
+  property("Authentication with invalid API key should throw InvalidApiKeyException") {
     whenReady(TmdbClient("00000000000000000000000000000000", "en").getToken.failed) { e ⇒
       e shouldBe a[InvalidApiKeyException]
     }
@@ -66,7 +66,7 @@ class TmdbAsyncClientTest extends PropSpec with Matchers with ScalaFutures with 
     }
   }
 
-  property("TMDb should shutdown gracefukky") {
+  property("TMDb should shutdown gracefully") {
     tmdbClient.shutdown
   }
 

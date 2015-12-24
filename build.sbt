@@ -1,6 +1,6 @@
 name := "TMDb-async-client"
 organization := "org.edla"
-version := "1.0.2"
+version := "1.0.3"
 scalaVersion := "2.11.7"
 coverageExcludedPackages := "org.edla.tmdb.client.Usage"
 scalacOptions ++= Seq(
@@ -19,7 +19,7 @@ scalacOptions ++= Seq(
 )
 scalacOptions in (Compile, doc) ++= Seq("-diagrams", "-implicits")
 libraryDependencies ++= {
-  val akkaStreamV = "2.0-M2"
+  val akkaStreamV = "2.0.1"
   Seq(
     "org.scala-lang.modules" %% "scala-async" % "0.9.5",
     "com.typesafe.akka" %% "akka-actor" % "2.4.1",
