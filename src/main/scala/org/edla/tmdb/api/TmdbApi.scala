@@ -1,5 +1,6 @@
 package org.edla.tmdb.api
 
+import acyclic.file
 import scala.concurrent.Future
 
 import Protocol.{ AuthenticateResult, Configuration, Credits, Movie, Results }

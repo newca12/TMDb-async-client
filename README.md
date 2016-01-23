@@ -1,4 +1,8 @@
-# TMDb-async-client [![Build Status](https://travis-ci.org/newca12/TMDb-async-client.svg?branch=master)](https://travis-ci.org/newca12/TMDb-async-client) [![codecov.io](https://codecov.io/github/newca12/TMDb-async-client/coverage.svg?branch=master)](https://codecov.io/github/newca12/TMDb-async-client?branch=master) [![Ohloh](http://www.ohloh.net/p/TMDb-async-client/widgets/project_thin_badge.gif)](https://www.ohloh.net/p/TMDb-async-client)
+# TMDb-async-client
+[![Build Status](https://img.shields.io/travis/newca12/TMDb-async-client.svg)](https://travis-ci.org/newca12/TMDb-async-client)
+[![codecov.io](https://img.shields.io/codecov/c/github/newca12/TMDb-async-client.svg)](https://codecov.io/github/newca12/TMDb-async-client?branch=master)
+[![Ohloh](http://www.ohloh.net/p/TMDb-async-client/widgets/project_thin_badge.gif)](https://www.ohloh.net/p/TMDb-async-client)
+[![Maven Central](https://img.shields.io/maven-central/v/org.edla/tmdb-async-client_2.11.svg)](https://maven-badges.herokuapp.com/maven-central/org.edla/tmdb-async-client_2.11)
 
 ### About ###
 TMDb-async-client is a native Scala SDK that provides asynchronous access to [The Movie Database][1] (TMDb) API.  
@@ -18,23 +22,6 @@ You will need an API key to The Movie Database to access the API.  To obtain a k
 4. Click on the link to generate a new API key and follow the instructions.
 
 ### Usage ###
-
-To import TMDb-async-client as a library in your own Java or Scala projects,  
-add the following lines to your build.sbt file, if you are using [SBT](http://www.scala-sbt.org/release/docs/Getting-Started/Setup) to manage the library dependencies of your project:
-
-```
-   libraryDependencies += "org.edla" %% "tmdb-async-client" % "1.0.2"
-```
-
-or add the following lines to your pom.xml file, if you are using [Maven](http://maven.apache.org/) instead:
-
-```
-   <dependency>
-       <groupId>org.edla</groupId>
-       <artifactId>tmdb-async-client_2.11</artifactId>
-       <version>1.0.2</version>
-   </dependency>
-```
 
 See [Usage.scala](https://github.com/newca12/TMDb-async-client/blob/master/src/main/scala/org/edla/tmdb/client/Usage.scala) for a runnable example.
 
@@ -59,7 +46,7 @@ Each function returns a `Future` of the response from the TMDb API, parsed into 
 API Key need to be available as an environment variable named apiKey if you want to run sbt test
 
 ### License ###
-© 2014-2015 Olivier ROLAND. Distributed under the GPLv3 License.
+© 2014-2016 Olivier ROLAND. Distributed under the GPLv3 License.
 
 [1]: http://www.themoviedb.org/
 [2]: http://doc.akka.io/docs/akka-stream-and-http-experimental/snapshot/scala.html

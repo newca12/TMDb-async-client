@@ -1,5 +1,6 @@
 package org.edla.tmdb.api
 
+import acyclic.file
 import spray.json.DefaultJsonProtocol
 
 object Protocol extends DefaultJsonProtocol {

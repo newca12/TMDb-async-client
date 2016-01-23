@@ -1,5 +1,6 @@
 package org.edla.tmdb.client
 
+import acyclic.file
 import scala.concurrent.Await
 import scala.concurrent.duration.DurationInt
 import scala.util.{ Failure, Success, Try }

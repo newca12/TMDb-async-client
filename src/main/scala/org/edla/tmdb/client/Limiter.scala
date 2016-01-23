@@ -1,5 +1,6 @@
 package org.edla.tmdb.client
 
+import acyclic.file
 import scala.collection.immutable.Queue
 import scala.concurrent._
 import scala.concurrent.duration._

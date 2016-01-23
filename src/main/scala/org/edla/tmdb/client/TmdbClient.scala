@@ -1,5 +1,6 @@
 package org.edla.tmdb.client
 
+import acyclic.file
 import java.io.{ File, FileOutputStream }
 import java.net.URLEncoder
 import scala.concurrent.{ Await, Future }
@@ -22,10 +23,19 @@ import akka.stream.ActorMaterializerSettings
 import java.util.concurrent.CountDownLatch
 
 object TmdbClient {
-  def apply(apiKey: String, language: String = "en", tmdbTimeOut: FiniteDuration = 10 seconds) = new TmdbClient(apiKey, language, tmdbTimeOut)
+  def apply(ApiKey: String, Language: String = "en", tmdbTimeOut: FiniteDuration = 10 seconds): TmdbClient = new TmdbClient(ApiKey, Language, tmdbTimeOut)
 }
 
 class TmdbClient(apiKey: String, language: String, tmdbTimeOut: FiniteDuration) extends TmdbApi {
+
+  private val ApiKey = s"api_key=${apiKey}"
+  private val Language = s"language=${language}"
+  private val MaxAvailableTokens = 10
+  // scalastyle:off magic.number
+  private val TokenRefreshPeriod = new FiniteDuration(5, SECONDS)
+  // scalastyle:on magic.number
+  private val TokenRefreshAmount = 10
+  private val Port = 80
 
   implicit val system = ActorSystem()
   implicit val executor = system.dispatcher
@@ -41,11 +51,11 @@ class TmdbClient(apiKey: String, language: String, tmdbTimeOut: FiniteDuration) 
 
   log.info(s"TMDb timeout value is ${tmdbTimeOut}")
 
-  val limiterProps = Limiter.props(maxAvailableTokens = 10, tokenRefreshPeriod = new FiniteDuration(5, SECONDS), tokenRefreshAmount = 10)
+  val limiterProps = Limiter.props(MaxAvailableTokens, TokenRefreshPeriod, TokenRefreshAmount)
   val limiter = system.actorOf(limiterProps, name = "testLimiter")
 
   lazy val tmdbConnectionFlow: Flow[HttpRequest, HttpResponse, Future[Http.OutgoingConnection]] =
-    Http().outgoingConnection("api.themoviedb.org", 80)
+    Http().outgoingConnection("api.themoviedb.org", Port)
 
   val poolClientFlow = Http().cachedHostConnectionPool[String]("api.themoviedb.org")
 
@@ -65,10 +75,11 @@ class TmdbClient(apiKey: String, language: String, tmdbTimeOut: FiniteDuration) 
         if (response.status.isSuccess) response else {
           val err = Unmarshal(response.entity).to[Error] map {
             e ⇒
-              if (e.status_code == 7)
+              if (e.status_code == 7) {
                 throw new InvalidApiKeyException(message = e.status_message, code = e.status_code)
-              else
+              } else {
                 throw TmdbException(message = e.status_message, code = e.status_code)
+              }
           }
           //TODO is it possible to avoid Await ?
           Await.result(err, 1 seconds)
@@ -87,48 +98,50 @@ class TmdbClient(apiKey: String, language: String, tmdbTimeOut: FiniteDuration) 
     }*/
 
   def getConfiguration(): Future[Configuration] = {
-    tmdbRequest(RequestBuilding.Get(s"/3/configuration?api_key=${apiKey}")).flatMap {
+    tmdbRequest(RequestBuilding.Get(s"/3/configuration?${ApiKey}")).flatMap {
       response ⇒ Unmarshal(response.entity).to[Configuration]
     }
   }
 
-  def getToken(): Future[AuthenticateResult] = tmdbRequest(RequestBuilding.Get(s"/3/authentication/token/new?api_key=${apiKey}")).flatMap {
+  def getToken(): Future[AuthenticateResult] = tmdbRequest(RequestBuilding.Get(s"/3/authentication/token/new?${ApiKey}")).flatMap {
     response ⇒ Unmarshal(response.entity).to[AuthenticateResult]
   }
 
   def getMovie(id: Long): Future[Movie] = {
-    tmdbRequest(RequestBuilding.Get(s"/3/movie/${id}?api_key=${apiKey}&language=${language}")).flatMap {
+    tmdbRequest(RequestBuilding.Get(s"/3/movie/${id}?${ApiKey}&${Language}")).flatMap {
       response ⇒ Unmarshal(response.entity).to[Movie]
     }
   }
 
   def getCredits(id: Long): Future[Credits] = {
-    tmdbRequest(RequestBuilding.Get(s"/3/movie/${id}/credits?api_key=${apiKey}&language=${language}")).flatMap {
+    tmdbRequest(RequestBuilding.Get(s"/3/movie/${id}/credits?${ApiKey}&${Language}")).flatMap {
       response ⇒ Unmarshal(response.entity).to[Credits]
     }
   }
 
   def getReleases(id: Long): Future[Releases] = {
-    tmdbRequest(RequestBuilding.Get(s"/3/movie/${id}/releases?api_key=${apiKey}")).flatMap {
+    tmdbRequest(RequestBuilding.Get(s"/3/movie/${id}/releases?${ApiKey}")).flatMap {
       response ⇒ Unmarshal(response.entity).to[Releases]
     }
   }
 
   def searchMovie(query: String, page: Int): Future[Results] = {
-    tmdbRequest(RequestBuilding.Get(s"/3/search/movie?api_key=${apiKey}&language=${language}&page=${page}&query=${URLEncoder.encode(query, "UTF-8")}")).flatMap {
+    tmdbRequest(RequestBuilding.Get(s"/3/search/movie?${ApiKey}&${Language}&page=${page}&query=${URLEncoder.encode(query, "UTF-8")}")).flatMap {
       response ⇒ Unmarshal(response.entity).to[Results]
     }
   }
 
   def shutdown(): Unit = {
-    system.terminate
-    Await.result(system.whenTerminated, Duration.Inf)
-    Limiter.system.terminate()
-    Await.result(Limiter.system.whenTerminated, Duration.Inf)
-    ()
+    Http().shutdownAllConnectionPools().onComplete { _ ⇒
+      system.terminate
+      Await.result(system.whenTerminated, Duration.Inf)
+      Limiter.system.terminate()
+      Await.result(Limiter.system.whenTerminated, Duration.Inf)
+      ()
+    }
   }
 
-  def downloadPoster(movie: Movie, path: String) = {
+  def downloadPoster(movie: Movie, path: String): Future[Boolean] = {
     val posterPath = movie.poster_path
     if (posterPath.isDefined) {
       val url = s"${baseUrl}w154${posterPath.get}"
@@ -146,8 +159,10 @@ class TmdbClient(apiKey: String, language: String, tmdbTimeOut: FiniteDuration) 
           latch.await()
           res.map(_ ⇒ true)
       }
-    } else Future {
-      false
+    } else {
+      Future {
+        false
+      }
     }
   }
 
