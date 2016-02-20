@@ -21,6 +21,7 @@ import akka.stream.scaladsl.{ Flow, Sink, Source }
 import akka.util.Timeout
 import akka.stream.ActorMaterializerSettings
 import java.util.concurrent.CountDownLatch
+import akka.NotUsed
 
 object TmdbClient {
   def apply(ApiKey: String, Language: String = "en", tmdbTimeOut: FiniteDuration = 10 seconds): TmdbClient = new TmdbClient(ApiKey, Language, tmdbTimeOut)
@@ -59,7 +60,7 @@ class TmdbClient(apiKey: String, language: String, tmdbTimeOut: FiniteDuration) 
 
   val poolClientFlow = Http().cachedHostConnectionPool[String]("api.themoviedb.org")
 
-  def limitGlobal[T](limiter: ActorRef): Flow[T, T, Unit] = {
+  def limitGlobal[T](limiter: ActorRef): Flow[T, T, NotUsed] = {
     import akka.pattern.ask
     import akka.util.Timeout
     Flow[T].mapAsync(1)((element: T) ⇒ {
@@ -68,7 +69,7 @@ class TmdbClient(apiKey: String, language: String, tmdbTimeOut: FiniteDuration) 
     })
   }
 
-  def errorHandling(): Flow[HttpResponse, HttpResponse, Unit] = {
+  def errorHandling(): Flow[HttpResponse, HttpResponse, NotUsed] = {
     //Flow[HttpResponse].mapAsyncUnordered(4)(response => response)
     Flow[HttpResponse].map {
       response ⇒

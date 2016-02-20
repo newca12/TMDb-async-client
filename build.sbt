@@ -1,6 +1,6 @@
 name := "TMDb-async-client"
 organization := "org.edla"
-version := "1.0.4"
+version := "1.0.5"
 scalaVersion := "2.11.7"
 coverageExcludedPackages := "org.edla.tmdb.client.Usage"
 scalacOptions ++= Seq(
@@ -10,7 +10,7 @@ scalacOptions ++= Seq(
   "-encoding", "UTF-8", // yes, this is 2 args
   "-feature",
   "-unchecked",
-  //"-Xfatal-warnings",
+  "-Xfatal-warnings",
   "-Xlint",
   "-Yno-adapted-args",
   "-Ywarn-numeric-widen",
@@ -19,14 +19,14 @@ scalacOptions ++= Seq(
 )
 scalacOptions in (Compile, doc) ++= Seq("-diagrams", "-implicits")
 libraryDependencies ++= {
-  val akkaStreamV = "2.0.2"
+  val akkaV = "2.4.2"
   Seq(
     "org.scala-lang.modules" %% "scala-async" % "0.9.5",
-    "com.typesafe.akka" %% "akka-actor" % "2.4.1",
-    "com.typesafe.akka" %% "akka-stream-experimental" % akkaStreamV,
-    "com.typesafe.akka" %% "akka-http-core-experimental" % akkaStreamV,
-    "com.typesafe.akka" %% "akka-http-experimental" % akkaStreamV,
-    "com.typesafe.akka" %% "akka-http-spray-json-experimental" % akkaStreamV,
+    "com.typesafe.akka" %% "akka-actor" % akkaV,
+    "com.typesafe.akka" %% "akka-stream" % akkaV,
+    "com.typesafe.akka" %% "akka-http-core" % akkaV,
+    "com.typesafe.akka" %% "akka-http-experimental" % akkaV,
+    "com.typesafe.akka" %% "akka-http-spray-json-experimental" % akkaV,
     "com.lihaoyi" %% "acyclic" % "0.1.3" % "provided",
     "org.scalatest" %% "scalatest" % "2.2.6" % "test"
   )
@@ -34,7 +34,7 @@ libraryDependencies ++= {
 addCompilerPlugin("com.lihaoyi" %% "acyclic" % "0.1.3")
 testFrameworks += new TestFramework("utest.runner.Framework")
 autoCompilerPlugins := true
-licenses := Seq("GNU GPL v3" -> url("http://www.gnu.org/licenses/gpl.html"))
+licenses := Seq("GNU GPL v3" → url("http://www.gnu.org/licenses/gpl.html"))
 homepage := Some(url("http://github.com/newca12/TMDb-async-client"))
 //conflictWarning := ConflictWarning.disable
 publishMavenStyle := true

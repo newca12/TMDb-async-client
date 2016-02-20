@@ -12,7 +12,6 @@ import akka.util._
 import akka.stream._
 import akka.stream.ActorMaterializer
 import akka.stream.actor._
-import akka.stream.io._
 import akka.stream.stage._
 import akka.stream.scaladsl._
 
