@@ -1,7 +1,7 @@
 name := "TMDb-async-client"
 organization := "org.edla"
-version := "1.0.5"
-scalaVersion := "2.11.7"
+version := "1.0.6"
+scalaVersion := "2.11.8"
 coverageExcludedPackages := "org.edla.tmdb.client.Usage"
 scalacOptions ++= Seq(
   "-language:postfixOps", "-language:existentials", "-language:implicitConversions",
@@ -15,7 +15,10 @@ scalacOptions ++= Seq(
   "-Yno-adapted-args",
   "-Ywarn-numeric-widen",
   "-Ywarn-value-discard",
-  "-Xfuture"
+  "-Xfuture",
+  "-Ybackend:GenBCode",
+  "-Ydelambdafy:method",
+  "-target:jvm-1.8"
 )
 scalacOptions in (Compile, doc) ++= Seq("-diagrams", "-implicits")
 libraryDependencies ++= {
@@ -27,7 +30,8 @@ libraryDependencies ++= {
     "com.typesafe.akka" %% "akka-http-core" % akkaV,
     "com.typesafe.akka" %% "akka-http-experimental" % akkaV,
     "com.typesafe.akka" %% "akka-http-spray-json-experimental" % akkaV,
-    "com.lihaoyi" %% "acyclic" % "0.1.3" % "provided",
+    "org.scala-lang.modules" %% "scala-java8-compat" % "0.7.0",
+    "com.lihaoyi" %% "acyclic" % "0.1.4" % "provided",
     "org.scalatest" %% "scalatest" % "2.2.6" % "test"
   )
 }
