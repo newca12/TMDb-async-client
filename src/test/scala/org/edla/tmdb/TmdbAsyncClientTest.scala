@@ -1,17 +1,14 @@
 package org.edla.tmdb
 
-import scala.concurrent.duration.DurationInt
-import org.edla.tmdb.client.TmdbClient
-import org.scalatest.{ Finders, Matchers, PropSpec }
-import org.scalatest.time.{ Seconds, Span }
-import org.scalatest.concurrent.ScalaFutures.{ convertScalaFuture, patienceConfig, whenReady }
-import org.scalatest._
-import org.scalatest.time._
-import org.scalatest.concurrent.ScalaFutures
-import java.nio.file.Paths
-import java.nio.file.Files
-import org.edla.tmdb.client.InvalidApiKeyException
 import java.io.File
+import java.nio.file.{Files, Paths}
+
+import org.edla.tmdb.client.{InvalidApiKeyException, TmdbClient}
+import org.scalatest.{GivenWhenThen, Matchers, PropSpec}
+import org.scalatest.concurrent.ScalaFutures
+import org.scalatest.time._
+
+import scala.concurrent.duration.DurationInt
 
 class TmdbAsyncClientTest extends PropSpec with Matchers with ScalaFutures with GivenWhenThen {
 
@@ -67,7 +64,7 @@ class TmdbAsyncClientTest extends PropSpec with Matchers with ScalaFutures with 
   }
 
   property("TMDb should shutdown gracefully") {
-    tmdbClient.shutdown
+    tmdbClient.shutdown()
   }
 
 }

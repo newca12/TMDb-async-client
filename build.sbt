@@ -1,6 +1,6 @@
 name := "TMDb-async-client"
 organization := "org.edla"
-version := "1.0.6"
+version := "1.0.7"
 scalaVersion := "2.11.8"
 coverageExcludedPackages := "org.edla.tmdb.client.Usage"
 scalacOptions ++= Seq(
@@ -20,9 +20,10 @@ scalacOptions ++= Seq(
   "-Ydelambdafy:method",
   "-target:jvm-1.8"
 )
+//wartremoverErrors ++= Warts.unsafe
 scalacOptions in (Compile, doc) ++= Seq("-diagrams", "-implicits")
 libraryDependencies ++= {
-  val akkaV = "2.4.2"
+  val akkaV = "2.4.6"
   Seq(
     "org.scala-lang.modules" %% "scala-async" % "0.9.5",
     "com.typesafe.akka" %% "akka-actor" % akkaV,
@@ -31,13 +32,9 @@ libraryDependencies ++= {
     "com.typesafe.akka" %% "akka-http-experimental" % akkaV,
     "com.typesafe.akka" %% "akka-http-spray-json-experimental" % akkaV,
     "org.scala-lang.modules" %% "scala-java8-compat" % "0.7.0",
-    "com.lihaoyi" %% "acyclic" % "0.1.4" % "provided",
     "org.scalatest" %% "scalatest" % "2.2.6" % "test"
   )
 }
-addCompilerPlugin("com.lihaoyi" %% "acyclic" % "0.1.3")
-testFrameworks += new TestFramework("utest.runner.Framework")
-autoCompilerPlugins := true
 licenses := Seq("GNU GPL v3" → url("http://www.gnu.org/licenses/gpl.html"))
 homepage := Some(url("http://github.com/newca12/TMDb-async-client"))
 //conflictWarning := ConflictWarning.disable
@@ -50,7 +47,6 @@ publishTo := {
     Some("releases" at nexus + "service/local/staging/deploy/maven2")
 }
 //publishTo := Some(Resolver.file("file", new File(Path.userHome.absolutePath + "/.m2/repository")))
-//publishTo := Some(Resolver.file("file",  new File("/PATH_TO_LOCAL_newca12.github.com/releases/")))
 publishArtifact in Test := false
 pomExtra := (
   <scm>
