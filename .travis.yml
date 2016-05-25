@@ -8,7 +8,7 @@ jdk:
 
 # codecov
 script: 
-  - sbt ++$TRAVIS_SCALA_VERSION clean coverage test assembly
+  - sbt ++$TRAVIS_SCALA_VERSION clean coverage test
   - sbt ++$TRAVIS_SCALA_VERSION coverageReport
   - sbt ++$TRAVIS_SCALA_VERSION coverageAggregate
 
