@@ -4,9 +4,9 @@ import java.io.File
 import java.nio.file.{Files, Paths}
 
 import org.edla.tmdb.client.{InvalidApiKeyException, TmdbClient}
-import org.scalatest.{GivenWhenThen, Matchers, PropSpec}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.time._
+import org.scalatest.{GivenWhenThen, Matchers, PropSpec}
 
 import scala.concurrent.duration.DurationInt
 
@@ -39,15 +39,17 @@ class TmdbAsyncClientTest extends PropSpec with Matchers with ScalaFutures with 
   }
 
   property("Get title from movie.id should be correct") {
-    val fileName = s"${System.getProperty("java.io.tmpdir")}${File.separator}poster.jpg"
+    val path = Paths.get(s"${System.getProperty("java.io.tmpdir")}${File.separator}poster.jpg")
     whenReady(tmdbClient.getMovie(680)) { movie ⇒
       movie.title should be("Pulp Fiction")
       Then("the poster should be downloaded successfully")
-      whenReady(tmdbClient.downloadPoster(movie, fileName)) { result ⇒
-        result should be(true)
-      }
+      val poster = tmdbClient.downloadPoster(movie, path)
+      if (poster.isDefined)
+        whenReady(poster.get) {
+          _.wasSuccessful should equal(true)
+        }
       And("the poster should be OK")
-      Files.size(Paths.get(fileName)) should be(14982)
+      Files.size(path) should be(14982)
     }
   }
 
@@ -59,7 +61,8 @@ class TmdbAsyncClientTest extends PropSpec with Matchers with ScalaFutures with 
 
   property("Get localized release date from movie.id should be correct") {
     whenReady(tmdbClient.getReleases(680)) { releases ⇒
-      releases.countries.filter(country ⇒ country.iso_3166_1 == "US").headOption.get.release_date should be("1994-10-14")
+      releases.countries.filter(country ⇒ country.iso_3166_1 == "US").headOption.get.release_date should be(
+        "1994-10-14")
     }
   }
 

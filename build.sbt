@@ -1,38 +1,41 @@
 name := "TMDb-async-client"
 organization := "org.edla"
-version := "1.0.7"
-scalaVersion := "2.11.8"
+version := "1.1.0"
+scalaVersion := "2.12.0"
 coverageExcludedPackages := "org.edla.tmdb.client.Usage"
 scalacOptions ++= Seq(
-  "-language:postfixOps", "-language:existentials", "-language:implicitConversions",
+  "-language:postfixOps",
+  "-language:existentials",
+  "-language:implicitConversions",
   //"-optimize",
   "-deprecation",
-  "-encoding", "UTF-8", // yes, this is 2 args
+  "-encoding", // yes this
+  "UTF-8", // is 2 args
   "-feature",
   "-unchecked",
   "-Xfatal-warnings",
   "-Xlint",
   "-Yno-adapted-args",
+  "-Ywarn-dead-code",
   "-Ywarn-numeric-widen",
   "-Ywarn-value-discard",
-  "-Xfuture",
-  "-Ybackend:GenBCode",
-  "-Ydelambdafy:method",
-  "-target:jvm-1.8"
+  "-Xfuture"
 )
 //wartremoverErrors ++= Warts.unsafe
 scalacOptions in (Compile, doc) ++= Seq("-diagrams", "-implicits")
+scalafmtConfig in ThisBuild := Some(file(".scalafmt.conf"))
 libraryDependencies ++= {
-  val akkaV = "2.4.6"
+  val akkaV     = "2.4.14"
+  val akkaHttpV = "10.0.0"
   Seq(
-    "org.scala-lang.modules" %% "scala-async" % "0.9.5",
-    "com.typesafe.akka" %% "akka-actor" % akkaV,
-    "com.typesafe.akka" %% "akka-stream" % akkaV,
-    "com.typesafe.akka" %% "akka-http-core" % akkaV,
-    "com.typesafe.akka" %% "akka-http-experimental" % akkaV,
-    "com.typesafe.akka" %% "akka-http-spray-json-experimental" % akkaV,
-    "org.scala-lang.modules" %% "scala-java8-compat" % "0.7.0",
-    "org.scalatest" %% "scalatest" % "2.2.6" % "test"
+    "org.scala-lang.modules" %% "scala-async"          % "0.9.6",
+    "com.typesafe.akka"      %% "akka-actor"           % akkaV,
+    "com.typesafe.akka"      %% "akka-stream"          % akkaV,
+    "com.typesafe.akka"      %% "akka-http-core"       % akkaHttpV,
+    "com.typesafe.akka"      %% "akka-http"            % akkaHttpV,
+    "com.typesafe.akka"      %% "akka-http-spray-json" % akkaHttpV,
+    "org.scala-lang.modules" %% "scala-java8-compat"   % "0.8.0",
+    "org.scalatest"          %% "scalatest"            % "3.0.1" % "test"
   )
 }
 licenses := Seq("GNU GPL v3" → url("http://www.gnu.org/licenses/gpl.html"))

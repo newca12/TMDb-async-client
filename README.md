@@ -36,7 +36,7 @@ Each function returns a `Future` of the response from the TMDb API, parsed into 
 
   val movies = tmdbClient.searchMovie("shark")
 
-  tmdbClient.downloadPoster(movie, "/tmp/poster.jpg")
+  tmdbClient.downloadPoster(movie, Paths.get("/tmp/poster.jpg"))
 
   tmdbClient.shutdown
 ```
@@ -49,6 +49,6 @@ API Key need to be available as an environment variable named apiKey if you want
 © 2014-2016 Olivier ROLAND. Distributed under the GPLv3 License.
 
 [1]: http://www.themoviedb.org/
-[2]: http://doc.akka.io/docs/akka-stream-and-http-experimental/snapshot/scala.html
-[3]: http://doc.akka.io/docs/akka-stream-and-http-experimental/snapshot/scala/http/common/json-support.html
-[4]: http://doc.akka.io/docs/akka-stream-and-http-experimental/snapshot/scala/stream-cookbook.html#Globally_limiting_the_rate_of_a_set_of_streams
+[2]: http://doc.akka.io/docs/akka-http/current/scala/http/index.html
+[3]: http://doc.akka.io/docs/akka-http/current/scala/http/common/json-support.html
+[4]: http://doc.akka.io/docs/akka/2.4/scala/stream/stream-cookbook.html#Globally_limiting_the_rate_of_a_set_of_streams
