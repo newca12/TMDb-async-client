@@ -55,8 +55,6 @@ class TmdbClient(apiKey: String, language: String, tmdbTimeOut: FiniteDuration) 
   val limiterProps =
     Limiter.props(MaxAvailableTokens, TokenRefreshPeriod, TokenRefreshAmount)
   val limiter = system.actorOf(limiterProps, name = "testLimiter")
-  val poolClientFlow =
-    Http().cachedHostConnectionPool[String]("api.themoviedb.org")
 
   log.info(s"TMDb timeout value is $tmdbTimeOut")
 
