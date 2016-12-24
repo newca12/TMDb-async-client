@@ -8,9 +8,9 @@ jdk:
 
 # codecov
 script: 
-  - sbt ++$TRAVIS_SCALA_VERSION clean coverage test
-  - sbt ++$TRAVIS_SCALA_VERSION coverageReport
-  - sbt ++$TRAVIS_SCALA_VERSION coverageAggregate
+  - sbt clean coverage test
+  - sbt coverageReport
+  - sbt coverageAggregate
 
 before_install:
 - pip install --user codecov
