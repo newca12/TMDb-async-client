@@ -23,6 +23,7 @@ scalacOptions ++= Seq(
 )
 //wartremoverErrors ++= Warts.unsafe
 scalacOptions in (Compile, doc) ++= Seq("-diagrams", "-implicits")
+scalafmtReformatOnCompile
 libraryDependencies ++= {
   val akkaV     = "2.4.16"
   val akkaHttpV = "10.0.1"
