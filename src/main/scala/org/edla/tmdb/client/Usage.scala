@@ -16,15 +16,15 @@ object Usage extends App {
   val apiKey = Try(sys.env("apiKey"))
 
   val tmdbClient = apiKey match {
-    case Success(key) => runDemo(TmdbClient(key, "en"))
-    case Failure(e) =>
+    case Success(key) ⇒ runDemo(TmdbClient(key, "en"))
+    case Failure(e) ⇒
       println("API Key need to be available as an environment variable named apiKey")
       System.exit(1)
   }
 
   def runDemo(tmdbClient: TmdbClient) = {
 
-    implicit val timeout = 10 seconds
+    implicit val timeout = 11 seconds
 
     val token = Try(Await.result(tmdbClient.getToken, timeout).request_token)
     token match {

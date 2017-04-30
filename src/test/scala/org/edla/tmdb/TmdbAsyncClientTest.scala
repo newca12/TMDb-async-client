@@ -27,9 +27,9 @@ class TmdbAsyncClientTest extends PropSpec with Matchers with ScalaFutures with 
   }
 
   property("Authentication with invalid API key should throw InvalidApiKeyException") {
-    whenReady(TmdbClient("00000000000000000000000000000000", "en").getToken.failed) { e ⇒
-      e shouldBe a[InvalidApiKeyException]
-    }
+    assertThrows[InvalidApiKeyException](
+      whenReady(TmdbClient("00000000000000000000000000000000", "en").getToken.failed) { e ⇒
+        })
   }
 
   property("Search movie by name should return results") {
