@@ -5,7 +5,6 @@ import java.nio.file.Paths
 import org.edla.tmdb.api.Protocol.{noCrew, unReleased}
 
 import scala.concurrent.Await
-import scala.concurrent.duration.DurationInt
 import scala.util.{Failure, Success, Try}
 
 //For demonstration purpose only
@@ -18,13 +17,13 @@ object Usage extends App {
   val tmdbClient = apiKey match {
     case Success(key) ⇒ runDemo(TmdbClient(key, "en"))
     case Failure(e) ⇒
-      println("API Key need to be available as an environment variable named apiKey")
+      System.err.println("API Key need to be available as an environment variable named apiKey")
       System.exit(1)
   }
 
-  def runDemo(tmdbClient: TmdbClient) = {
+  private def runDemo(tmdbClient: TmdbClient) = {
 
-    implicit val timeout = 11 seconds
+    implicit val timeout = RequestRateLimitDelay
 
     val token = Try(Await.result(tmdbClient.getToken, timeout).request_token)
     token match {

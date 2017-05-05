@@ -7,9 +7,6 @@ import scala.concurrent.duration._
 //http://doc.akka.io/docs/akka/snapshot/scala/stream/stream-cookbook.html#Globally_limiting_the_rate_of_a_set_of_streams
 object Limiter {
   implicit val system = ActorSystem()
-  //limiter and associated scheduler should not be blocked so it need a dedicated actor system
-  //val system = ActorSystem("LimiterSystem")
-  //println("Limiter system is " + system.name)
 
   case class WantToPass(rateLimitRemaining: Int)
   case object MayPass
@@ -43,8 +40,8 @@ class Limiter(
       permitTokens = math.min(permitTokens + tokenRefreshAmount, maxAvailableTokens)
     case WantToPass(rateLimitRemaining) ⇒
       permitTokens -= 1
-      if (rateLimitRemaining == 39) {
-        permitTokens = 38
+      if (rateLimitRemaining == RequestRateLimitMax - 1) {
+        permitTokens = RequestRateLimitMax - 2
         if (replenishTimer.isDefined) replenishTimer.get.cancel
         replenishTimer = Some(
           system.scheduler

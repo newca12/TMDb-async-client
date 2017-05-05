@@ -18,11 +18,11 @@ import akka.util.Timeout
 import org.edla.tmdb.api.Protocol.{AuthenticateResult, Configuration, Credits, Error, Movie, Releases, Results}
 import org.edla.tmdb.api.TmdbApi
 
-import scala.concurrent.duration.{Duration, DurationInt, FiniteDuration, SECONDS}
+import scala.concurrent.duration.{Duration, DurationInt, FiniteDuration}
 import scala.concurrent.{Await, Future}
 
 object TmdbClient {
-  def apply(ApiKey: String, Language: String = "en", tmdbTimeOut: FiniteDuration = 11 seconds): TmdbClient =
+  def apply(ApiKey: String, Language: String = "en", tmdbTimeOut: FiniteDuration = RequestRateLimitDelay): TmdbClient =
     new TmdbClient(ApiKey, Language, tmdbTimeOut)
 }
 
@@ -35,12 +35,9 @@ class TmdbClient(apiKey: String, language: String, tmdbTimeOut: FiniteDuration) 
   private implicit val timeout   = Timeout(tmdbTimeOut)
   private val ApiKey             = s"api_key=$apiKey"
   private val Language           = s"language=$language"
-  private val MaxAvailableTokens = 39
-  // scalastyle:off magic.number
-  private val TokenRefreshPeriod = new FiniteDuration(11, SECONDS)
-  // scalastyle:on magic.number
-  private val TokenRefreshAmount = 39
-  private val Port               = 80
+  private val MaxAvailableTokens = RequestRateLimitMax - 1
+  private val TokenRefreshPeriod = RequestRateLimitDelay
+  private val TokenRefreshAmount = RequestRateLimitMax - 1
 
   val tmdbConnectionFlow: Flow[HttpRequest, HttpResponse, Future[Http.OutgoingConnection]] =
     Http().outgoingConnection("api.themoviedb.org", Port)

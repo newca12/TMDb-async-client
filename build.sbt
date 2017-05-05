@@ -1,6 +1,6 @@
 name := "TMDb-async-client"
 organization := "org.edla"
-version := "1.1.1"
+version := "1.1.2"
 scalaVersion := "2.12.2"
 coverageExcludedPackages := "org.edla.tmdb.client.Usage"
 scalacOptions ++= Seq(
@@ -55,8 +55,8 @@ scalacOptions ++= Seq(
 //wartremoverErrors ++= Warts.unsafe
 scalacOptions in (Compile, doc) ++= Seq("-diagrams", "-implicits")
 libraryDependencies ++= {
-  val akkaV     = "2.5.0"
-  val akkaHttpV = "10.0.5"
+  val akkaV     = "2.5.1"
+  val akkaHttpV = "10.0.6"
   Seq(
     "org.scala-lang.modules" %% "scala-async"          % "0.9.6",
     "com.typesafe.akka"      %% "akka-actor"           % akkaV,
