@@ -62,7 +62,7 @@ class TmdbClient(apiKey: String, language: String, tmdbTimeOut: FiniteDuration) 
       Unmarshal(response.entity).to[AuthenticateResult]
     }
 
-  def getMovie(id: Long): Future[Movie] = {
+  def getMovie(id: Int): Future[Movie] = {
     tmdbRequest(RequestBuilding.Get(s"/3/movie/$id?$ApiKey&$Language")).flatMap { response ⇒
       Unmarshal(response.entity).to[Movie]
     }
@@ -76,7 +76,7 @@ class TmdbClient(apiKey: String, language: String, tmdbTimeOut: FiniteDuration) 
   }
    */
 
-  def getCredits(id: Long): Future[Credits] = {
+  def getCredits(id: Int): Future[Credits] = {
     tmdbRequest(RequestBuilding.Get(s"/3/movie/$id/credits?$ApiKey&$Language")).flatMap { response ⇒
       Unmarshal(response.entity).to[Credits]
     }
@@ -114,7 +114,7 @@ class TmdbClient(apiKey: String, language: String, tmdbTimeOut: FiniteDuration) 
     }
   }
 
-  def getReleases(id: Long): Future[Releases] = {
+  def getReleases(id: Int): Future[Releases] = {
     tmdbRequest(RequestBuilding.Get(s"/3/movie/$id/releases?$ApiKey")).flatMap { response ⇒
       Unmarshal(response.entity).to[Releases]
     }

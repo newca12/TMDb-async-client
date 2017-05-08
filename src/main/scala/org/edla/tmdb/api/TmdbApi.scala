@@ -8,8 +8,8 @@ import org.edla.tmdb.api.Protocol.{AuthenticateResult, Configuration, Credits, M
 import scala.concurrent.Future
 
 trait TmdbApi {
-  def getMovie(id: Long): Future[Movie]
-  def getCredits(id: Long): Future[Credits]
+  def getMovie(id: Int): Future[Movie]
+  def getCredits(id: Int): Future[Credits]
   def getConfiguration: Future[Configuration]
   def getToken: Future[AuthenticateResult]
   def searchMovie(query: String, page: Int): Future[Results]
