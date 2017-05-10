@@ -12,8 +12,8 @@ import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport.sprayJsonUnmars
 import akka.http.scaladsl.model.Uri.apply
 import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
 import akka.http.scaladsl.unmarshalling.Unmarshal
+import akka.stream._
 import akka.stream.scaladsl.{FileIO, Flow, Sink, Source}
-import akka.stream.{ActorMaterializer, IOResult}
 import akka.util.Timeout
 import org.edla.tmdb.api.Protocol.{AuthenticateResult, Configuration, Credits, Error, Movie, Releases, Results}
 import org.edla.tmdb.api.TmdbApi
@@ -28,16 +28,20 @@ object TmdbClient {
 
 class TmdbClient(apiKey: String, language: String, tmdbTimeOut: FiniteDuration) extends TmdbApi {
 
-  implicit val system       = ActorSystem()
-  implicit val executor     = system.dispatcher
-  implicit val materializer = ActorMaterializer()
+  implicit val system   = ActorSystem()
+  implicit val executor = system.dispatcher
+  implicit val materializer = ActorMaterializer(
+    ActorMaterializerSettings(system)
+      .withInputBuffer(initialSize = 1, maxSize = 1)
+      .withMaxFixedBufferSize(1)
+      .withOutputBurstLimit(1))
 
   private implicit val timeout   = Timeout(tmdbTimeOut)
   private val ApiKey             = s"api_key=$apiKey"
   private val Language           = s"language=$language"
-  private val MaxAvailableTokens = RequestRateLimitMax - 1
+  private val MaxAvailableTokens = RequestRateLimitMax
   private val TokenRefreshPeriod = RequestRateLimitDelay
-  private val TokenRefreshAmount = RequestRateLimitMax - 1
+  private val TokenRefreshAmount = RequestRateLimitMax
 
   val tmdbConnectionFlow: Flow[HttpRequest, HttpResponse, Future[Http.OutgoingConnection]] =
     Http().outgoingConnection("api.themoviedb.org", Port)
@@ -71,7 +75,7 @@ class TmdbClient(apiKey: String, language: String, tmdbTimeOut: FiniteDuration) 
   //could not find implicit value for parameter um:
   //http://kto.so/2016/04/10/hakk-the-planet-implementing-akka-http-marshallers/
   /*
-  def generic[T](request: String): Future[T] = tmdbRequest(RequestBuilding.Get(request)).flatMap { response ⇒
+  def generic[T: Manifest](request: String): Future[T] = tmdbRequest(RequestBuilding.Get(request)).flatMap { response ⇒
     Unmarshal(response.entity).to[T]
   }
    */
@@ -83,14 +87,15 @@ class TmdbClient(apiKey: String, language: String, tmdbTimeOut: FiniteDuration) 
   }
 
   def tmdbRequest(request: HttpRequest): Future[HttpResponse] =
-    Source.single(request).via(tmdbConnectionFlow).via(limitGlobal(limiter)).via(errorHandling()) runWith Sink.head
+    Source.single(request).via(limitGlobal(limiter)).via(tmdbConnectionFlow).via(errorHandling()) runWith Sink.head
 
-  def limitGlobal(limiter: ActorRef): Flow[HttpResponse, HttpResponse, NotUsed] = {
+  def limitGlobal[T](limiter: ActorRef): Flow[T, T, NotUsed] = {
     import akka.pattern.ask
-    Flow[HttpResponse].mapAsync(parallelism = 1)((response: HttpResponse) ⇒ {
-      val rateLimitRemaining   = response.getHeader("X-RateLimit-Remaining").get.value().toInt
-      val limiterTriggerFuture = limiter ? Limiter.WantToPass(rateLimitRemaining)
-      limiterTriggerFuture.map((_) ⇒ response)
+    // scalastyle:off magic.number
+    Flow[T].mapAsync(parallelism = 4)((element: T) ⇒ {
+      // scalastyle:on magic.number
+      val limiterTriggerFuture = limiter ? Limiter.WantToPass
+      limiterTriggerFuture.map((_) ⇒ element)
     })
   }
 

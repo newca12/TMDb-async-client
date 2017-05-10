@@ -24,7 +24,7 @@ object Protocol extends DefaultJsonProtocol {
                    production_countries: List[ProductionCountry],
                    revenue: Int,
                    homepage: Option[String],
-                   imdb_id: String,
+                   imdb_id: Option[String],
                    id: Int,
                    release_date: Option[String],
                    budget: Int,

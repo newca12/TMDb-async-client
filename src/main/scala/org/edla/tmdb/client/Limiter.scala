@@ -8,7 +8,7 @@ import scala.concurrent.duration._
 object Limiter {
   implicit val system = ActorSystem()
 
-  case class WantToPass(rateLimitRemaining: Int)
+  case object WantToPass
   case object MayPass
   case object ReplenishTokens
 
@@ -38,25 +38,25 @@ class Limiter(
   val open: Receive = {
     case ReplenishTokens ⇒
       permitTokens = math.min(permitTokens + tokenRefreshAmount, maxAvailableTokens)
-    case WantToPass(rateLimitRemaining) ⇒
+    case WantToPass ⇒
       permitTokens -= 1
-      if (rateLimitRemaining == RequestRateLimitMax - 1) {
-        permitTokens = RequestRateLimitMax - 2
-        if (replenishTimer.isDefined) replenishTimer.get.cancel
+      //Attempt to better synchronize first trig with remote server limiter
+      if (replenishTimer.isEmpty) {
         replenishTimer = Some(
           system.scheduler
             .schedule(initialDelay = Duration.Zero, interval = tokenRefreshPeriod, receiver = self, ReplenishTokens))
       }
-
       sender() ! MayPass
-      if ((permitTokens == 0) || (rateLimitRemaining == 1)) context.become(closed)
+      if ((permitTokens == 0)) {
+        context.become(closed)
+      }
   }
 
   val closed: Receive = {
     case ReplenishTokens ⇒
       permitTokens = math.min(permitTokens + tokenRefreshAmount, maxAvailableTokens)
       releaseWaiting()
-    case WantToPass(rateLimitRemaining @ _) ⇒
+    case WantToPass ⇒
       waitQueue = waitQueue.enqueue(sender())
   }
 
