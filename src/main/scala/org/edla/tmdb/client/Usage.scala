@@ -15,7 +15,7 @@ object Usage extends App {
   val apiKey = Try(sys.env("apiKey"))
 
   val tmdbClient = apiKey match {
-    case Success(key) ⇒ runDemo(TmdbClient(key, "en"))
+    case Success(key) ⇒ runDemo(TmdbClient(key, "fr"))
     case Failure(e) ⇒
       System.err.println("API Key need to be available as an environment variable named apiKey")
       System.exit(1)
@@ -35,7 +35,7 @@ object Usage extends App {
         System.exit(1)
     }
 
-    val movies = Await.result(tmdbClient.searchMovie("shark", 1), timeout)
+    val movies = Await.result(tmdbClient.searchMovie("Take me", 1), timeout)
     for (m ← movies.results) {
       val movie    = Await.result(tmdbClient.getMovie(m.id), timeout)
       val credits  = Await.result(tmdbClient.getCredits(m.id), timeout)

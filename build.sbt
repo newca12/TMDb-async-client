@@ -1,7 +1,13 @@
 name := "TMDb-async-client"
 organization := "org.edla"
-version := "1.2.1"
-scalaVersion := "2.12.2"
+version := "1.2.2"
+
+scalaVersion in ThisBuild := "2.12.3"
+scalafmtOnCompile in ThisBuild := true
+scalafmtVersion in ThisBuild := "1.1.0"
+
+resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/"
+
 coverageExcludedPackages := "org.edla.tmdb.client.Usage"
 scalacOptions ++= Seq(
   "-deprecation", // Emit warning and location for usages of deprecated APIs.
@@ -14,8 +20,8 @@ scalacOptions ++= Seq(
   "-language:higherKinds", // Allow higher-kinded types
   "-language:implicitConversions", // Allow definition of implicit functions called views
   "-language:postfixOps", // Allow postfix operator notation
-  "-unchecked", // Enable additional warnings where generated code depends on assumptions.
-  "-Xcheckinit", // Wrap field accessors to throw an exception on uninitialized access.
+  "-unchecked",           // Enable additional warnings where generated code depends on assumptions.
+  //Failed with Scala 2.12.3 "-Xcheckinit", // Wrap field accessors to throw an exception on uninitialized access.
   "-Xfatal-warnings", // Fail the compilation if there are any warnings.
   "-Xfuture", // Turn on future language features.
   "-Xlint:adapted-args", // Warn if an argument list is modified to match the receiver.
@@ -55,10 +61,10 @@ scalacOptions ++= Seq(
 //wartremoverErrors ++= Warts.unsafe
 scalacOptions in (Compile, doc) ++= Seq("-diagrams", "-implicits")
 libraryDependencies ++= {
-  val akkaV     = "2.5.1"
-  val akkaHttpV = "10.0.6"
+  val akkaV     = "2.5.4"
+  val akkaHttpV = "10.0.9"
   Seq(
-    "org.scala-lang.modules" %% "scala-async"          % "0.9.6",
+    "org.scala-lang.modules" %% "scala-async"          % "0.9.7",
     "com.typesafe.akka"      %% "akka-actor"           % akkaV,
     "com.typesafe.akka"      %% "akka-stream"          % akkaV,
     "com.typesafe.akka"      %% "akka-http-core"       % akkaHttpV,
@@ -68,14 +74,7 @@ libraryDependencies ++= {
     "org.scalatest"          %% "scalatest"            % "3.0.3" % "test"
   )
 }
-def latestScalafmt = "0.7.0-RC1"
-commands += Command.args("scalafmt", "Run scalafmt cli.") {
-  case (state, args) ⇒
-    val Right(scalafmt) =
-      org.scalafmt.bootstrap.ScalafmtBootstrap.fromVersion(latestScalafmt)
-    scalafmt.main("--non-interactive" +: args.toArray)
-    state
-}
+
 licenses := Seq("GNU GPL v3" → url("http://www.gnu.org/licenses/gpl.html"))
 homepage := Some(url("http://github.com/newca12/TMDb-async-client"))
 //conflictWarning := ConflictWarning.disable
