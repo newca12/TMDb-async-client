@@ -52,7 +52,7 @@ class TmdbAsyncClientTest extends PropSpec with Matchers with ScalaFutures with 
           _.wasSuccessful should equal(true)
         }
       And("the poster should be OK")
-      Files.size(path) should be(14982)
+      Files.size(path) should be(17695)
     }
   }
 
@@ -65,7 +65,7 @@ class TmdbAsyncClientTest extends PropSpec with Matchers with ScalaFutures with 
   property("Get localized release date from movie.id should be correct") {
     whenReady(tmdbClient.getReleases(680)) { releases ⇒
       releases.countries.filter(country ⇒ country.iso_3166_1 == "US").headOption.get.release_date should be(
-        "1994-10-14")
+        "1994-09-23")
     }
   }
 

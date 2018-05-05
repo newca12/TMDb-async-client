@@ -1,10 +1,8 @@
 name := "TMDb-async-client"
 organization := "org.edla"
-version := "1.2.2"
+version := "1.2.3"
 
-scalaVersion in ThisBuild := "2.12.3"
-scalafmtOnCompile in ThisBuild := true
-scalafmtVersion in ThisBuild := "1.1.0"
+scalaVersion in ThisBuild := "2.12.6"
 
 resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/"
 
@@ -61,8 +59,8 @@ scalacOptions ++= Seq(
 //wartremoverErrors ++= Warts.unsafe
 scalacOptions in (Compile, doc) ++= Seq("-diagrams", "-implicits")
 libraryDependencies ++= {
-  val akkaV     = "2.5.4"
-  val akkaHttpV = "10.0.9"
+  val akkaV     = "2.5.12"
+  val akkaHttpV = "10.1.1"
   Seq(
     "org.scala-lang.modules" %% "scala-async"          % "0.9.7",
     "com.typesafe.akka"      %% "akka-actor"           % akkaV,
@@ -70,8 +68,8 @@ libraryDependencies ++= {
     "com.typesafe.akka"      %% "akka-http-core"       % akkaHttpV,
     "com.typesafe.akka"      %% "akka-http"            % akkaHttpV,
     "com.typesafe.akka"      %% "akka-http-spray-json" % akkaHttpV,
-    "org.scala-lang.modules" %% "scala-java8-compat"   % "0.8.0",
-    "org.scalatest"          %% "scalatest"            % "3.0.3" % "test"
+    "org.scala-lang.modules" %% "scala-java8-compat"   % "0.9.0",
+    "org.scalatest"          %% "scalatest"            % "3.0.5" % "test"
   )
 }
 
