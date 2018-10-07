@@ -2,24 +2,28 @@ package org.edla.tmdb.client
 
 import java.net.URLEncoder
 import java.nio.file.Path
+import java.time.Instant
+import java.util.concurrent.TimeUnit
 
 import akka.NotUsed
-import akka.actor.{ActorRef, ActorSystem}
+import akka.actor.ActorSystem
 import akka.event.Logging
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.client.RequestBuilding
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport.sprayJsonUnmarshaller
 import akka.http.scaladsl.model.Uri.apply
-import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
+import akka.http.scaladsl.model._
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream._
-import akka.stream.scaladsl.{FileIO, Flow, Sink, Source}
-import akka.util.Timeout
+import akka.stream.contrib.DelayFlow
+import akka.stream.contrib.DelayFlow.DelayStrategy
+import akka.stream.scaladsl.{FileIO, Flow, Sink, Source, SourceQueueWithComplete}
 import org.edla.tmdb.api.Protocol.{AuthenticateResult, Configuration, Credits, Error, Movie, Releases, Results}
 import org.edla.tmdb.api.TmdbApi
 
-import scala.concurrent.duration.{Duration, DurationInt, FiniteDuration}
-import scala.concurrent.{Await, Future}
+import scala.concurrent.duration.{Duration, FiniteDuration, _}
+import scala.concurrent.{Await, ExecutionContextExecutor, Future, Promise}
+import scala.util.{Failure, Success, Try}
 
 object TmdbClient {
   def apply(ApiKey: String, Language: String = "en", tmdbTimeOut: FiniteDuration = RequestRateLimitDelay): TmdbClient =
@@ -28,118 +32,144 @@ object TmdbClient {
 
 class TmdbClient(apiKey: String, language: String, tmdbTimeOut: FiniteDuration) extends TmdbApi {
 
-  implicit val system   = ActorSystem()
-  implicit val executor = system.dispatcher
-  implicit val materializer = ActorMaterializer(
+  implicit val system: ActorSystem                = ActorSystem()
+  implicit val executor: ExecutionContextExecutor = system.dispatcher
+  implicit val materializer: ActorMaterializer = ActorMaterializer(
     ActorMaterializerSettings(system)
       .withInputBuffer(initialSize = 1, maxSize = 1)
       .withMaxFixedBufferSize(1)
       .withOutputBurstLimit(1))
 
-  private implicit val timeout   = Timeout(tmdbTimeOut)
-  private val ApiKey             = s"api_key=$apiKey"
-  private val Language           = s"language=$language"
-  private val MaxAvailableTokens = RequestRateLimitMax
-  private val TokenRefreshPeriod = RequestRateLimitDelay
-  private val TokenRefreshAmount = RequestRateLimitMax
+  private val ApiKey   = s"api_key=$apiKey"
+  private val Language = s"language=$language"
 
-  val tmdbConnectionFlow: Flow[HttpRequest, HttpResponse, Future[Http.OutgoingConnection]] =
-    Http().outgoingConnection("api.themoviedb.org", Port)
-  private val baseUrl =
+  //https://stackoverflow.com/a/49068165
+
+  val noDelay: FiniteDuration = FiniteDuration(0L, TimeUnit.SECONDS)
+
+  val strategySupplier: () ⇒ DelayStrategy[HttpResponse] = () ⇒
+    (response: HttpResponse) ⇒ {
+      val rate = RateLimit(response.headers)
+      if (rate.remaining > 1) {
+        noDelay
+      } else {
+        (rate.reset - Instant.now.getEpochSecond + 1).seconds
+      }
+  }
+  val delayFlow: Flow[HttpResponse, HttpResponse, NotUsed] = DelayFlow(strategySupplier)
+
+  val tmdbConnectionFlow
+    : Flow[(HttpRequest, Promise[HttpResponse]), (Try[HttpResponse], Promise[HttpResponse]), Http.HostConnectionPool] =
+    Http().cachedHostConnectionPool("api.themoviedb.org", Port)
+
+  private lazy val baseUrl =
     Await.result(getConfiguration, tmdbTimeOut).images.base_url
   val log = Logging(system, getClass)
 
-  lazy val limiterProps =
-    Limiter.props(MaxAvailableTokens, TokenRefreshPeriod, TokenRefreshAmount)
-  lazy val limiter = system.actorOf(limiterProps, name = "testLimiter")
+  val bufferSize = 100
+
+  //if the buffer fills up then this strategy drops the oldest elements
+  //upon the arrival of a new element.
+  val overflowStrategy: OverflowStrategy = akka.stream.OverflowStrategy.dropHead
+
+  lazy val queue: SourceQueueWithComplete[(HttpRequest, Promise[HttpResponse])] = Source
+    .queue(bufferSize, overflowStrategy)
+    .via(tmdbConnectionFlow)
+    .via(errorHandling())
+    .via(delayFlow)
+    .to(Sink.ignore)
+    .run()
 
   log.info(s"TMDb timeout value is $tmdbTimeOut")
-
-  def getConfiguration: Future[Configuration] = {
-    tmdbRequest(RequestBuilding.Get(s"/3/configuration?$ApiKey")).flatMap { response ⇒
-      Unmarshal(response.entity).to[Configuration]
-    }
-  }
-
-  def getToken: Future[AuthenticateResult] =
-    tmdbRequest(RequestBuilding.Get(s"/3/authentication/token/new?$ApiKey")).flatMap { response ⇒
-      Unmarshal(response.entity).to[AuthenticateResult]
-    }
-
-  def getMovie(id: Int): Future[Movie] = {
-    tmdbRequest(RequestBuilding.Get(s"/3/movie/$id?$ApiKey&$Language")).flatMap { response ⇒
-      Unmarshal(response.entity).to[Movie]
-    }
-  }
 
   //could not find implicit value for parameter um:
   //http://kto.so/2016/04/10/hakk-the-planet-implementing-akka-http-marshallers/
   /*
-  def generic[T: Manifest](request: String): Future[T] = tmdbRequest(RequestBuilding.Get(request)).flatMap { response ⇒
-    Unmarshal(response.entity).to[T]
+  def manageRequest[@specialized T](request: String): Future[T] = {
+    val promise = Promise[HttpResponse]()
+    queue.offer((RequestBuilding.Get(request), promise))
+    promise.future.flatMap { response ⇒
+      Unmarshal(response.entity).to[T]
   }
    */
 
+  def getConfiguration: Future[Configuration] = {
+
+    val promise = Promise[HttpResponse]()
+    queue.offer((RequestBuilding.Get(s"/3/configuration?$ApiKey"), promise))
+    promise.future.flatMap { response ⇒
+      Unmarshal(response.entity).to[Configuration]
+    }
+  }
+
+  def getToken: Future[AuthenticateResult] = {
+    val promise = Promise[HttpResponse]()
+    queue.offer((RequestBuilding.Get(s"/3/authentication/token/new?$ApiKey"), promise))
+    val f: Future[HttpResponse] = promise.future
+    f recover { case cause ⇒ throw cause }
+    f.flatMap { response ⇒
+      Unmarshal(response.entity).to[AuthenticateResult]
+    }
+  }
+
+  def getMovie(id: Int): Future[Movie] = {
+    val promise = Promise[HttpResponse]()
+    queue.offer((RequestBuilding.Get(s"/3/movie/$id?$ApiKey&$Language"), promise))
+    promise.future.flatMap { response ⇒
+      Unmarshal(response.entity).to[Movie]
+    }
+  }
+
   def getCredits(id: Int): Future[Credits] = {
-    tmdbRequest(RequestBuilding.Get(s"/3/movie/$id/credits?$ApiKey&$Language")).flatMap { response ⇒
+    val promise = Promise[HttpResponse]()
+    queue.offer((RequestBuilding.Get(s"/3/movie/$id/credits?$ApiKey&$Language"), promise))
+    promise.future.flatMap { response ⇒
       Unmarshal(response.entity).to[Credits]
     }
   }
 
-  def tmdbRequest(request: HttpRequest): Future[HttpResponse] =
-    Source.single(request).via(limitGlobal(limiter)).via(tmdbConnectionFlow).via(errorHandling()) runWith Sink.head
-
-  def limitGlobal[T](limiter: ActorRef): Flow[T, T, NotUsed] = {
-    import akka.pattern.ask
-    // scalastyle:off magic.number
-    Flow[T].mapAsync(parallelism = 4)((element: T) ⇒ {
-      // scalastyle:on magic.number
-      val limiterTriggerFuture = limiter ? Limiter.WantToPass
-      limiterTriggerFuture.map((_) ⇒ element)
-    })
-  }
-
-  def errorHandling(): Flow[HttpResponse, HttpResponse, NotUsed] = {
-    //Flow[HttpResponse].mapAsyncUnordered(4)(response => response)
-    Flow[HttpResponse].map { response ⇒
-      if (response.status.isSuccess) {
-        response
-      } else {
-        val err =
-          Unmarshal(response.entity).to[Error] map { e ⇒
-            if (e.status_code == 7) {
-              throw new InvalidApiKeyException(message = e.status_message, code = e.status_code)
-            } else {
-              throw TmdbException(message = e.status_message, code = e.status_code)
-            }
-          }
-        //TODO is it possible to avoid Await ?
-        Await.result(err, 1 seconds)
-      }
-    }
-  }
-
   def getReleases(id: Int): Future[Releases] = {
-    tmdbRequest(RequestBuilding.Get(s"/3/movie/$id/releases?$ApiKey")).flatMap { response ⇒
+    val promise = Promise[HttpResponse]()
+    queue.offer((RequestBuilding.Get(s"/3/movie/$id/releases?$ApiKey"), promise))
+    promise.future.flatMap { response ⇒
       Unmarshal(response.entity).to[Releases]
     }
   }
 
   def searchMovie(query: String, page: Int): Future[Results] = {
-    tmdbRequest(
-      RequestBuilding
-        .Get(s"/3/search/movie?$ApiKey&$Language&page=$page&query=${URLEncoder.encode(query, "UTF-8")}")).flatMap {
-      response ⇒
-        Unmarshal(response.entity).to[Results]
+    val promise = Promise[HttpResponse]()
+    queue.offer(
+      (RequestBuilding.Get(s"/3/search/movie?$ApiKey&$Language&page=$page&query=${URLEncoder.encode(query, "UTF-8")}"),
+       promise))
+    promise.future.flatMap { response ⇒
+      Unmarshal(response.entity).to[Results]
     }
   }
+
+  def errorHandling(): Flow[(Try[HttpResponse], Promise[HttpResponse]), HttpResponse, NotUsed] =
+    Flow[(Try[HttpResponse], Promise[HttpResponse])].map {
+      case (Success(response), p) ⇒
+        if (response.status.isSuccess) {
+          p.success(response)
+          response
+        } else {
+          Unmarshal(response.entity).to[Error] map { e ⇒
+            if (e.status_code == 7) {
+              p.failure(new InvalidApiKeyException(message = e.status_message, code = e.status_code))
+            } else {
+              p.failure(TmdbException(message = e.status_message, code = e.status_code))
+            }
+          }
+          response
+        }
+      case (Failure(t), _) ⇒
+        throw t
+    }
 
   def shutdown(): Unit = {
     Http().shutdownAllConnectionPools().onComplete { _ ⇒
       system.terminate
       Await.result(system.whenTerminated, Duration.Inf)
-      Limiter.system.terminate()
-      Await.result(Limiter.system.whenTerminated, Duration.Inf)
       ()
     }
   }
@@ -159,4 +189,5 @@ class TmdbClient(apiKey: String, language: String, tmdbTimeOut: FiniteDuration) 
       None
     }
   }
+
 }

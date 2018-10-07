@@ -1,8 +1,8 @@
 name := "TMDb-async-client"
 organization := "org.edla"
-version := "1.2.3"
+version := "2.0.0"
 
-scalaVersion in ThisBuild := "2.12.6"
+scalaVersion in ThisBuild := "2.12.7"
 
 resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/"
 
@@ -14,15 +14,15 @@ scalacOptions ++= Seq(
   "-explaintypes", // Explain type errors in more detail.
   "-feature", // Emit warning and location for usages of features that should be imported explicitly.
   "-language:existentials", // Existential types (besides wildcard types) can be written and inferred
-  "-language:experimental.macros", // Allow macro definition (besides implementation and application)
+  //"-language:experimental.macros", // Allow macro definition (besides implementation and application)
   "-language:higherKinds", // Allow higher-kinded types
   "-language:implicitConversions", // Allow definition of implicit functions called views
   "-language:postfixOps", // Allow postfix operator notation
   "-unchecked",           // Enable additional warnings where generated code depends on assumptions.
   //Failed with Scala 2.12.3 "-Xcheckinit", // Wrap field accessors to throw an exception on uninitialized access.
-  "-Xfatal-warnings", // Fail the compilation if there are any warnings.
+  //"-Xfatal-warnings", // Fail the compilation if there are any warnings.
   "-Xfuture", // Turn on future language features.
-  "-Xlint:adapted-args", // Warn if an argument list is modified to match the receiver.
+  "-Xlint:adapted-args", // Warn if an argument list is modified to match the receiver. //removed or deprecated in Scala 2.13
   "-Xlint:by-name-right-associative", // By-name parameter of right associative operator.
   "-Xlint:constant", // Evaluation of a constant arithmetic expression results in an error.
   "-Xlint:delayedinit-select", // Selecting member of DelayedInit.
@@ -43,10 +43,10 @@ scalacOptions ++= Seq(
   "-Ypartial-unification", // Enable partial unification in type constructor inference
   "-Ywarn-dead-code", // Warn when dead code is identified.
   "-Ywarn-extra-implicit", // Warn when more than one implicit parameter section is defined.
-  "-Ywarn-inaccessible", // Warn about inaccessible types in method signatures.
+  "-Ywarn-inaccessible", // Warn about inaccessible types in method signatures. //removed or deprecated in Scala 2.13
   "-Ywarn-infer-any", // Warn when a type argument is inferred to be `Any`.
   "-Ywarn-nullary-override", // Warn when non-nullary `def f()' overrides nullary `def f'.
-  "-Ywarn-nullary-unit", // Warn when nullary methods return Unit.
+  "-Ywarn-nullary-unit", // Warn when nullary methods return Unit. //removed or deprecated in Scala 2.13
   "-Ywarn-numeric-widen", // Warn when numerics are widened.
   "-Ywarn-unused:implicits", // Warn if an implicit parameter is unused.
   "-Ywarn-unused:imports", // Warn if an import selector is not referenced.
@@ -59,8 +59,8 @@ scalacOptions ++= Seq(
 //wartremoverErrors ++= Warts.unsafe
 scalacOptions in (Compile, doc) ++= Seq("-diagrams", "-implicits")
 libraryDependencies ++= {
-  val akkaV     = "2.5.12"
-  val akkaHttpV = "10.1.1"
+  val akkaV     = "2.5.17"
+  val akkaHttpV = "10.1.5"
   Seq(
     "org.scala-lang.modules" %% "scala-async"          % "0.9.7",
     "com.typesafe.akka"      %% "akka-actor"           % akkaV,
@@ -68,7 +68,8 @@ libraryDependencies ++= {
     "com.typesafe.akka"      %% "akka-http-core"       % akkaHttpV,
     "com.typesafe.akka"      %% "akka-http"            % akkaHttpV,
     "com.typesafe.akka"      %% "akka-http-spray-json" % akkaHttpV,
-    "org.scala-lang.modules" %% "scala-java8-compat"   % "0.9.0",
+    "com.typesafe.akka" %% "akka-stream-contrib" % "0.9",
+  "org.scala-lang.modules" %% "scala-java8-compat"   % "0.9.0",
     "org.scalatest"          %% "scalatest"            % "3.0.5" % "test"
   )
 }

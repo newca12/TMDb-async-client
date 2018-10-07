@@ -3,7 +3,6 @@ package org.edla.tmdb
 import scala.concurrent.duration._
 
 package object client {
-  val RequestRateLimitMax   = 38
-  val RequestRateLimitDelay = 11 seconds
-  val Port                  = 80
+  val RequestRateLimitDelay: FiniteDuration = 11 seconds
+  val Port: Int                             = 80
 }

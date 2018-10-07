@@ -9,6 +9,6 @@ class InvalidApiKeyException(message: String = null, cause: Throwable = null, co
     extends TmdbException(message, cause, code)
 
 object TmdbException {
-  def apply(message: String = null, cause: Throwable = null, code: Int): TmdbException =
+  def apply(message: String = null, cause: Throwable = null, code: Int = -1): TmdbException =
     new TmdbException(message, cause, code)
 }

@@ -27,7 +27,7 @@ object Usage extends App {
 
     val token = Try(Await.result(tmdbClient.getToken, timeout).request_token)
     token match {
-      case Success(v) ⇒
+      case Success(_) ⇒
         tmdbClient.log.info(s"OK got valid token : ${token.get}")
       case Failure(e) ⇒
         tmdbClient.log.info(e.getMessage)
