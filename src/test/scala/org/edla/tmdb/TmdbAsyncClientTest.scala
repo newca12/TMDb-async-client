@@ -18,6 +18,8 @@ import org.scalatest.{GivenWhenThen, Matchers, PropSpec}
 import scala.concurrent.duration.DurationInt
 import scala.util.{Failure, Success}
 
+import scala.concurrent.ExecutionContext.Implicits.global
+
 class TmdbAsyncClientTest extends PropSpec with Matchers with ScalaFutures with GivenWhenThen {
 
   val apiKey = sys.env("apiKey")
@@ -59,6 +61,30 @@ class TmdbAsyncClientTest extends PropSpec with Matchers with ScalaFutures with 
     }
   }
 
+  property("Do not flood remote server when download posters") {
+    var count = 0
+    for (pageNum ← List(1, 2)) {
+      tmdbClient.searchMovie("batman", pageNum).map { movies ⇒
+        for (result ← movies.results) {
+          val movie = tmdbClient.getMovie(result.id)
+          movie.onComplete {
+            case Success(movie) ⇒
+              count = count + 1
+              val path = Paths.get(s"${System.getProperty("java.io.tmpdir")}${File.separator}${movie.id}.jpg")
+              //println(movie.id + ":" + path)
+              val poster = tmdbClient.downloadPoster(movie, path)
+              if (poster.isDefined)
+                whenReady(poster.get) {
+                  _.wasSuccessful should equal(true)
+                }
+          }
+        }
+      }
+    }
+    Thread.sleep(30000)
+    count shouldBe 40
+  }
+
   property("Get director from movie.id should be correct") {
     whenReady(tmdbClient.getCredits(680)) { credits ⇒
       credits.crew.find(crew ⇒ crew.job == "Director").get.name should be("Quentin Tarantino")
@@ -71,9 +97,7 @@ class TmdbAsyncClientTest extends PropSpec with Matchers with ScalaFutures with 
     }
   }
 
-  import scala.concurrent.ExecutionContext.Implicits.global
-
-  property("Respect server rating") {
+  property("Respect server rating (test 1)") {
     var count = 85
     for (_ ← 1 to 85) {
       val test: Future[Movie] = tmdbClient.getMovie(680)
@@ -87,7 +111,7 @@ class TmdbAsyncClientTest extends PropSpec with Matchers with ScalaFutures with 
     count shouldBe 0
   }
 
-  property("Do not flood remote server") {
+  property("Respect server rating (test 2)") {
 
     whenReady(tmdbClient.searchMovie("life", 1)) { movies ⇒
       for (m ← movies.results) {

@@ -13,6 +13,7 @@ import akka.http.scaladsl.client.RequestBuilding
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport.sprayJsonUnmarshaller
 import akka.http.scaladsl.model.Uri.apply
 import akka.http.scaladsl.model._
+import akka.http.scaladsl.settings.ConnectionPoolSettings
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream._
 import akka.stream.contrib.DelayFlow
@@ -177,10 +178,11 @@ class TmdbClient(apiKey: String, language: String, tmdbTimeOut: FiniteDuration) 
   //http://stackoverflow.com/questions/34912143/how-to-download-a-http-resource-to-a-file-with-akka-streams-and-http
   def downloadPoster(movie: Movie, path: Path): Option[Future[IOResult]] = {
     val posterPath = movie.poster_path
+    val settings   = ConnectionPoolSettings(system).withMaxOpenRequests(64)
     if (posterPath.isDefined) {
       val url = s"${baseUrl}w154${posterPath.get}"
       val result: Future[HttpResponse] =
-        Http().singleRequest(HttpRequest(uri = url)).mapTo[HttpResponse]
+        Http().singleRequest(HttpRequest(uri = url), settings = settings).mapTo[HttpResponse]
       Some(result.flatMap { resp ⇒
         val source = resp.entity.dataBytes
         source.runWith(FileIO.toPath(path))

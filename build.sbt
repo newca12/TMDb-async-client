@@ -1,6 +1,6 @@
 name := "TMDb-async-client"
 organization := "org.edla"
-version := "2.0.0"
+version := "2.0.1"
 
 scalaVersion in ThisBuild := "2.12.7"
 
