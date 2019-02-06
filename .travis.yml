@@ -1,10 +1,11 @@
 # Use Docker-based container (instead of OpenVZ)
 sudo: false
 language: scala
-scala: 
-- 2.12.6
-jdk: 
-- oraclejdk8
+scala:
+- 2.12.8
+jdk:
+- openjdk8
+- oraclejdk11
 
 # codecov
 script: 
