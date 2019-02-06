@@ -39,7 +39,8 @@ class TmdbClient(apiKey: String, language: String, tmdbTimeOut: FiniteDuration) 
     ActorMaterializerSettings(system)
       .withInputBuffer(initialSize = 1, maxSize = 1)
       .withMaxFixedBufferSize(1)
-      .withOutputBurstLimit(1))
+      .withOutputBurstLimit(1)
+  )
 
   private val ApiKey   = s"api_key=$apiKey"
   private val Language = s"language=$language"
@@ -48,15 +49,15 @@ class TmdbClient(apiKey: String, language: String, tmdbTimeOut: FiniteDuration) 
 
   val noDelay: FiniteDuration = FiniteDuration(0L, TimeUnit.SECONDS)
 
-  val strategySupplier: () ⇒ DelayStrategy[HttpResponse] = () ⇒
-    (response: HttpResponse) ⇒ {
+  val strategySupplier: () => DelayStrategy[HttpResponse] = () =>
+    (response: HttpResponse) => {
       val rate = RateLimit(response.headers)
       if (rate.remaining > 1) {
         noDelay
       } else {
         (rate.reset - Instant.now.getEpochSecond + 1).seconds
       }
-  }
+    }
   val delayFlow: Flow[HttpResponse, HttpResponse, NotUsed] = DelayFlow(strategySupplier)
 
   val tmdbConnectionFlow
@@ -98,7 +99,7 @@ class TmdbClient(apiKey: String, language: String, tmdbTimeOut: FiniteDuration) 
 
     val promise = Promise[HttpResponse]()
     queue.offer((RequestBuilding.Get(s"/3/configuration?$ApiKey"), promise))
-    promise.future.flatMap { response ⇒
+    promise.future.flatMap { response =>
       Unmarshal(response.entity).to[Configuration]
     }
   }
@@ -107,8 +108,8 @@ class TmdbClient(apiKey: String, language: String, tmdbTimeOut: FiniteDuration) 
     val promise = Promise[HttpResponse]()
     queue.offer((RequestBuilding.Get(s"/3/authentication/token/new?$ApiKey"), promise))
     val f: Future[HttpResponse] = promise.future
-    f recover { case cause ⇒ throw cause }
-    f.flatMap { response ⇒
+    f recover { case cause => throw cause }
+    f.flatMap { response =>
       Unmarshal(response.entity).to[AuthenticateResult]
     }
   }
@@ -116,7 +117,7 @@ class TmdbClient(apiKey: String, language: String, tmdbTimeOut: FiniteDuration) 
   def getMovie(id: Int): Future[Movie] = {
     val promise = Promise[HttpResponse]()
     queue.offer((RequestBuilding.Get(s"/3/movie/$id?$ApiKey&$Language"), promise))
-    promise.future.flatMap { response ⇒
+    promise.future.flatMap { response =>
       Unmarshal(response.entity).to[Movie]
     }
   }
@@ -124,7 +125,7 @@ class TmdbClient(apiKey: String, language: String, tmdbTimeOut: FiniteDuration) 
   def getCredits(id: Int): Future[Credits] = {
     val promise = Promise[HttpResponse]()
     queue.offer((RequestBuilding.Get(s"/3/movie/$id/credits?$ApiKey&$Language"), promise))
-    promise.future.flatMap { response ⇒
+    promise.future.flatMap { response =>
       Unmarshal(response.entity).to[Credits]
     }
   }
@@ -132,7 +133,7 @@ class TmdbClient(apiKey: String, language: String, tmdbTimeOut: FiniteDuration) 
   def getReleases(id: Int): Future[Releases] = {
     val promise = Promise[HttpResponse]()
     queue.offer((RequestBuilding.Get(s"/3/movie/$id/releases?$ApiKey"), promise))
-    promise.future.flatMap { response ⇒
+    promise.future.flatMap { response =>
       Unmarshal(response.entity).to[Releases]
     }
   }
@@ -140,21 +141,24 @@ class TmdbClient(apiKey: String, language: String, tmdbTimeOut: FiniteDuration) 
   def searchMovie(query: String, page: Int): Future[Results] = {
     val promise = Promise[HttpResponse]()
     queue.offer(
-      (RequestBuilding.Get(s"/3/search/movie?$ApiKey&$Language&page=$page&query=${URLEncoder.encode(query, "UTF-8")}"),
-       promise))
-    promise.future.flatMap { response ⇒
+      (
+        RequestBuilding.Get(s"/3/search/movie?$ApiKey&$Language&page=$page&query=${URLEncoder.encode(query, "UTF-8")}"),
+        promise
+      )
+    )
+    promise.future.flatMap { response =>
       Unmarshal(response.entity).to[Results]
     }
   }
 
   def errorHandling(): Flow[(Try[HttpResponse], Promise[HttpResponse]), HttpResponse, NotUsed] =
     Flow[(Try[HttpResponse], Promise[HttpResponse])].map {
-      case (Success(response), p) ⇒
+      case (Success(response), p) =>
         if (response.status.isSuccess) {
           p.success(response)
           response
         } else {
-          Unmarshal(response.entity).to[Error] map { e ⇒
+          Unmarshal(response.entity).to[Error] map { e =>
             if (e.status_code == 7) {
               p.failure(new InvalidApiKeyException(message = e.status_message, code = e.status_code))
             } else {
@@ -163,12 +167,12 @@ class TmdbClient(apiKey: String, language: String, tmdbTimeOut: FiniteDuration) 
           }
           response
         }
-      case (Failure(t), _) ⇒
+      case (Failure(t), _) =>
         throw t
     }
 
   def shutdown(): Unit = {
-    Http().shutdownAllConnectionPools().onComplete { _ ⇒
+    Http().shutdownAllConnectionPools().onComplete { _ =>
       system.terminate
       Await.result(system.whenTerminated, Duration.Inf)
       ()
@@ -183,7 +187,7 @@ class TmdbClient(apiKey: String, language: String, tmdbTimeOut: FiniteDuration) 
       val url = s"${baseUrl}w154${posterPath.get}"
       val result: Future[HttpResponse] =
         Http().singleRequest(HttpRequest(uri = url), settings = settings).mapTo[HttpResponse]
-      Some(result.flatMap { resp ⇒
+      Some(result.flatMap { resp =>
         val source = resp.entity.dataBytes
         source.runWith(FileIO.toPath(path))
       })

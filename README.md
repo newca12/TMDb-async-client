@@ -46,7 +46,7 @@ Each function returns a `Future` of the response from the TMDb API, parsed into 
 API Key need to be available as an environment variable named apiKey if you want to run sbt test
 
 ### License ###
-© 2014-2018 Olivier ROLAND. Distributed under the GPLv3 License.
+© 2014-2019 Olivier ROLAND. Distributed under the GPLv3 License.
 
 [1]: http://www.themoviedb.org/
 [2]: http://doc.akka.io/docs/akka-http/current/scala/http/index.html

@@ -11,59 +11,69 @@ object Protocol extends DefaultJsonProtocol {
   final case class ProductionCompanie(name: String, id: Int)
   final case class SpokenLanguage(iso_639_1: String, name: String)
   final case class Collection(poster_path: Option[String], id: Int, name: String, backdrop_path: Option[String])
-  final case class Movie(runtime: Option[Int],
-                         status: String,
-                         backdrop_path: Option[String],
-                         overview: Option[String],
-                         title: String,
-                         vote_count: Int,
-                         tagline: Option[String],
-                         belongs_to_collection: Option[Collection],
-                         original_title: String,
-                         poster_path: Option[String],
-                         production_countries: List[ProductionCountry],
-                         revenue: Int,
-                         homepage: Option[String],
-                         imdb_id: Option[String],
-                         id: Int,
-                         release_date: Option[String],
-                         budget: Int,
-                         popularity: Double,
-                         genres: List[Genre],
-                         production_companies: List[ProductionCompanie],
-                         adult: Boolean,
-                         spoken_languages: List[SpokenLanguage])
-  final case class Result(original_title: String,
-                          poster_path: Option[String],
-                          release_date: Option[String],
-                          id: Int,
-                          adult: Boolean,
-                          title: String,
-                          popularity: Double,
-                          vote_count: Int,
-                          vote_average: Int,
-                          backdrop_path: Option[String])
+  final case class Movie(
+      runtime: Option[Int],
+      status: String,
+      backdrop_path: Option[String],
+      overview: Option[String],
+      title: String,
+      vote_count: Int,
+      tagline: Option[String],
+      belongs_to_collection: Option[Collection],
+      original_title: String,
+      poster_path: Option[String],
+      production_countries: List[ProductionCountry],
+      revenue: Int,
+      homepage: Option[String],
+      imdb_id: Option[String],
+      id: Int,
+      release_date: Option[String],
+      budget: Int,
+      popularity: Double,
+      genres: List[Genre],
+      production_companies: List[ProductionCompanie],
+      adult: Boolean,
+      spoken_languages: List[SpokenLanguage]
+  )
+  final case class Result(
+      original_title: String,
+      poster_path: Option[String],
+      release_date: Option[String],
+      id: Int,
+      adult: Boolean,
+      title: String,
+      popularity: Double,
+      vote_count: Int,
+      vote_average: Int,
+      backdrop_path: Option[String]
+  )
   final case class Results(total_results: Int, results: List[Result], page: Int, total_pages: Int)
-  final case class Images(still_sizes: List[String],
-                          poster_sizes: List[String],
-                          base_url: String,
-                          profile_sizes: List[String],
-                          secure_base_url: String,
-                          logo_sizes: List[String],
-                          backdrop_sizes: List[String])
+  final case class Images(
+      still_sizes: List[String],
+      poster_sizes: List[String],
+      base_url: String,
+      profile_sizes: List[String],
+      secure_base_url: String,
+      logo_sizes: List[String],
+      backdrop_sizes: List[String]
+  )
   final case class Configuration(images: Images, change_keys: List[String])
-  final case class Cast(cast_id: Int,
-                        character: String,
-                        credit_id: String,
-                        name: String,
-                        order: Int,
-                        profile_path: Option[String])
-  final case class Crew(credit_id: String,
-                        departement: Option[String],
-                        id: Int,
-                        job: String,
-                        name: String,
-                        profile_path: Option[String])
+  final case class Cast(
+      cast_id: Int,
+      character: String,
+      credit_id: String,
+      name: String,
+      order: Int,
+      profile_path: Option[String]
+  )
+  final case class Crew(
+      credit_id: String,
+      departement: Option[String],
+      id: Int,
+      job: String,
+      name: String,
+      profile_path: Option[String]
+  )
   final case class Credits(id: Int, cast: List[Cast], crew: List[Crew])
   final case class Releases(id: Int, countries: List[Release])
 

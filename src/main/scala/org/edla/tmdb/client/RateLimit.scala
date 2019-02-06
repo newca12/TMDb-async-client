@@ -14,10 +14,10 @@ object RateLimit {
          |Please report it at https://github.com/newca12/TMDb-async-client/issues/new
          |Headers names were: ${headers.map(_.lowercaseName).mkString(", ")}""".stripMargin
 
-    def extractHeaderValue[T](name: String)(f: String ⇒ T): T =
+    def extractHeaderValue[T](name: String)(f: String => T): T =
       headers
         .find(_.lowercaseName == name)
-        .map(h ⇒ f(h.value))
+        .map(h => f(h.value))
         .getOrElse(throw TmdbException(errorMsg))
 
     val limit     = extractHeaderValue("x-ratelimit-limit")(_.toInt)

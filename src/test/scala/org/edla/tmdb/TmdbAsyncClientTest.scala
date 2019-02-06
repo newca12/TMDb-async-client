@@ -31,7 +31,7 @@ class TmdbAsyncClientTest extends PropSpec with Matchers with ScalaFutures with 
   implicit val defaultPatience: PatienceConfig = PatienceConfig(timeout = Span(5, Seconds), interval = Span(1, Seconds))
 
   property("Authentication with valid API key should be successfull") {
-    whenReady(tmdbClient.getToken) { authenticateResult ⇒
+    whenReady(tmdbClient.getToken) { authenticateResult =>
       authenticateResult.success should be(true)
     }
   }
@@ -41,14 +41,14 @@ class TmdbAsyncClientTest extends PropSpec with Matchers with ScalaFutures with 
   }
 
   property("Search movie by name should return results") {
-    whenReady(tmdbClient.searchMovie("shark", 1)) { results ⇒
+    whenReady(tmdbClient.searchMovie("shark", 1)) { results =>
       results.total_results should be > 5
     }
   }
 
   property("Get title from movie.id should be correct") {
     val path = Paths.get(s"${System.getProperty("java.io.tmpdir")}${File.separator}poster.jpg")
-    whenReady(tmdbClient.getMovie(680)) { movie ⇒
+    whenReady(tmdbClient.getMovie(680)) { movie =>
       movie.title should be("Pulp Fiction")
       Then("the poster should be downloaded successfully")
       val poster = tmdbClient.downloadPoster(movie, path)
@@ -63,12 +63,12 @@ class TmdbAsyncClientTest extends PropSpec with Matchers with ScalaFutures with 
 
   property("Do not flood remote server when download posters") {
     var count = 0
-    for (pageNum ← List(1, 2)) {
-      tmdbClient.searchMovie("batman", pageNum).map { movies ⇒
-        for (result ← movies.results) {
+    for (pageNum <- List(1, 2)) {
+      tmdbClient.searchMovie("batman", pageNum).map { movies =>
+        for (result <- movies.results) {
           val movie = tmdbClient.getMovie(result.id)
           movie.onComplete {
-            case Success(movie) ⇒
+            case Success(movie) =>
               count = count + 1
               val path = Paths.get(s"${System.getProperty("java.io.tmpdir")}${File.separator}${movie.id}.jpg")
               //println(movie.id + ":" + path)
@@ -86,25 +86,25 @@ class TmdbAsyncClientTest extends PropSpec with Matchers with ScalaFutures with 
   }
 
   property("Get director from movie.id should be correct") {
-    whenReady(tmdbClient.getCredits(680)) { credits ⇒
-      credits.crew.find(crew ⇒ crew.job == "Director").get.name should be("Quentin Tarantino")
+    whenReady(tmdbClient.getCredits(680)) { credits =>
+      credits.crew.find(crew => crew.job == "Director").get.name should be("Quentin Tarantino")
     }
   }
 
   property("Get localized release date from movie.id should be correct") {
-    whenReady(tmdbClient.getReleases(680)) { releases ⇒
-      releases.countries.find(country ⇒ country.iso_3166_1 == "US").get.release_date should be("1994-09-23")
+    whenReady(tmdbClient.getReleases(680)) { releases =>
+      releases.countries.find(country => country.iso_3166_1 == "US").get.release_date should be("1994-09-23")
     }
   }
 
   property("Respect server rating (test 1)") {
     var count = 85
-    for (_ ← 1 to 85) {
+    for (_ <- 1 to 85) {
       val test: Future[Movie] = tmdbClient.getMovie(680)
       test onComplete {
-        case Success(_) ⇒
+        case Success(_) =>
           count = count - 1
-        case Failure(_) ⇒
+        case Failure(_) =>
       }
     }
     Thread.sleep(30000)
@@ -113,40 +113,40 @@ class TmdbAsyncClientTest extends PropSpec with Matchers with ScalaFutures with 
 
   property("Respect server rating (test 2)") {
 
-    whenReady(tmdbClient.searchMovie("life", 1)) { movies ⇒
-      for (m ← movies.results) {
+    whenReady(tmdbClient.searchMovie("life", 1)) { movies =>
+      for (m <- movies.results) {
         val movie = tmdbClient.getMovie(m.id)
         movie.onComplete {
-          case Failure(e) ⇒ fail(e)
-          case Success(_) ⇒
+          case Failure(e) => fail(e)
+          case Success(_) =>
             val credits = tmdbClient.getCredits(m.id)
             credits.onComplete {
-              case Failure(e) ⇒ fail(e)
-              case Success(_) ⇒
+              case Failure(e) => fail(e)
+              case Success(_) =>
             }
             val releases = tmdbClient.getReleases(m.id)
             releases.onComplete {
-              case Failure(e) ⇒ fail(e)
-              case Success(_) ⇒
+              case Failure(e) => fail(e)
+              case Success(_) =>
             }
         }
       }
     }
-    whenReady(tmdbClient.searchMovie("Take me", 1)) { movies ⇒
-      for (m ← movies.results) {
+    whenReady(tmdbClient.searchMovie("Take me", 1)) { movies =>
+      for (m <- movies.results) {
         val movie = tmdbClient.getMovie(m.id)
         movie.onComplete {
-          case Failure(e) ⇒ fail(e)
-          case Success(_) ⇒
+          case Failure(e) => fail(e)
+          case Success(_) =>
             val credits = tmdbClient.getCredits(m.id)
             credits.onComplete {
-              case Failure(e) ⇒ fail(e)
-              case Success(_) ⇒
+              case Failure(e) => fail(e)
+              case Success(_) =>
             }
             val releases = tmdbClient.getReleases(m.id)
             releases.onComplete {
-              case Failure(e) ⇒ fail(e)
-              case Success(_) ⇒
+              case Failure(e) => fail(e)
+              case Success(_) =>
             }
         }
       }

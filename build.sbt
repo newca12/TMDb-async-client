@@ -12,7 +12,7 @@ scalacOptions ++= Seq(
   "-encoding",
   "utf-8", // Specify character encoding used by source files.
   "-explaintypes", // Explain type errors in more detail.
-  "-feature", // Emit warning and location for usages of features that should be imported explicitly.
+  "-feature",               // Emit warning and location for usages of features that should be imported explicitly.
   "-language:existentials", // Existential types (besides wildcard types) can be written and inferred
   //"-language:experimental.macros", // Allow macro definition (besides implementation and application)
   "-language:higherKinds", // Allow higher-kinded types
@@ -68,13 +68,13 @@ libraryDependencies ++= {
     "com.typesafe.akka"      %% "akka-http-core"       % akkaHttpV,
     "com.typesafe.akka"      %% "akka-http"            % akkaHttpV,
     "com.typesafe.akka"      %% "akka-http-spray-json" % akkaHttpV,
-    "com.typesafe.akka" %% "akka-stream-contrib" % "0.9",
-  "org.scala-lang.modules" %% "scala-java8-compat"   % "0.9.0",
+    "com.typesafe.akka"      %% "akka-stream-contrib"  % "0.9",
+    "org.scala-lang.modules" %% "scala-java8-compat"   % "0.9.0",
     "org.scalatest"          %% "scalatest"            % "3.0.5" % "test"
   )
 }
 
-licenses := Seq("GNU GPL v3" → url("http://www.gnu.org/licenses/gpl.html"))
+licenses := Seq("GNU GPL v3" -> url("http://www.gnu.org/licenses/gpl.html"))
 homepage := Some(url("http://github.com/newca12/TMDb-async-client"))
 //conflictWarning := ConflictWarning.disable
 publishMavenStyle := true
@@ -96,7 +96,7 @@ pomExtra := (
     <developer>
       <id>newca12</id>
       <name>Olivier ROLAND</name>
-      <url>http://www.edla.org</url>
+      <url>https://edla.org</url>
     </developer>
   </developers>
 )
