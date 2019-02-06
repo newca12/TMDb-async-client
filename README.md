@@ -45,6 +45,10 @@ Each function returns a `Future` of the response from the TMDb API, parsed into 
 
 API Key need to be available as an environment variable named apiKey if you want to run sbt test
 
+### Related Projects ###
+
+[JavaFX client for TMDb (The Movie Database) ](https://github.com/newca12/TMDb-shelf)
+
 ### License ###
 © 2014-2019 Olivier ROLAND. Distributed under the GPLv3 License.
 

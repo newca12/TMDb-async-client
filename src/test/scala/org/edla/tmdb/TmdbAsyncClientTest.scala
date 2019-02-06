@@ -22,7 +22,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class TmdbAsyncClientTest extends PropSpec with Matchers with ScalaFutures with GivenWhenThen {
 
-  val apiKey = sys.env("apiKey")
+  val apiKey: String = sys.env("apiKey")
 
   val tmdbClient = TmdbClient(apiKey)
 
@@ -52,10 +52,11 @@ class TmdbAsyncClientTest extends PropSpec with Matchers with ScalaFutures with 
       movie.title should be("Pulp Fiction")
       Then("the poster should be downloaded successfully")
       val poster = tmdbClient.downloadPoster(movie, path)
-      if (poster.isDefined)
+      if (poster.isDefined) {
         whenReady(poster.get) {
           _.wasSuccessful should equal(true)
         }
+      }
       And("the poster should be OK")
       Files.size(path) should be(17695)
     }
@@ -66,17 +67,19 @@ class TmdbAsyncClientTest extends PropSpec with Matchers with ScalaFutures with 
     for (pageNum <- List(1, 2)) {
       tmdbClient.searchMovie("batman", pageNum).map { movies =>
         for (result <- movies.results) {
-          val movie = tmdbClient.getMovie(result.id)
-          movie.onComplete {
+          val movieF = tmdbClient.getMovie(result.id)
+          movieF.onComplete {
             case Success(movie) =>
               count = count + 1
               val path = Paths.get(s"${System.getProperty("java.io.tmpdir")}${File.separator}${movie.id}.jpg")
               //println(movie.id + ":" + path)
               val poster = tmdbClient.downloadPoster(movie, path)
-              if (poster.isDefined)
+              if (poster.isDefined) {
                 whenReady(poster.get) {
                   _.wasSuccessful should equal(true)
                 }
+              }
+            case Failure(_) =>
           }
         }
       }
