@@ -60,8 +60,11 @@ class TmdbClient(apiKey: String, language: String, tmdbTimeOut: FiniteDuration) 
     }
   val delayFlow: Flow[HttpResponse, HttpResponse, NotUsed] = DelayFlow(strategySupplier)
 
-  val tmdbConnectionFlow
-    : Flow[(HttpRequest, Promise[HttpResponse]), (Try[HttpResponse], Promise[HttpResponse]), Http.HostConnectionPool] =
+  val tmdbConnectionFlow: Flow[
+    (HttpRequest, Promise[HttpResponse]),
+    (Try[HttpResponse], Promise[HttpResponse]),
+    Http.HostConnectionPool
+  ] =
     Http().cachedHostConnectionPool("api.themoviedb.org", Port)
 
   private lazy val baseUrl =
