@@ -84,7 +84,7 @@ class TmdbAsyncClientTest extends PropSpec with Matchers with ScalaFutures with 
         }
       }
     }
-    //Thread.sleep(30000)
+    Thread.sleep(30000)
     count shouldBe 40
   }
 
@@ -154,7 +154,7 @@ class TmdbAsyncClientTest extends PropSpec with Matchers with ScalaFutures with 
         }
       }
     }
-    //Thread.sleep(2 * timeout.toMillis)
+    Thread.sleep(2 * timeout.toMillis)
   }
 
   property("TMDb should shutdown gracefully") {

@@ -59,10 +59,10 @@ scalacOptions ++= Seq(
 //wartremoverErrors ++= Warts.unsafe
 scalacOptions in (Compile, doc) ++= Seq("-diagrams", "-implicits")
 libraryDependencies ++= {
-  val akkaV     = "2.5.21"
+  val akkaV     = "2.5.22"
   val akkaHttpV = "10.1.8"
   Seq(
-    "org.scala-lang.modules" %% "scala-async"          % "0.9.7",
+    "org.scala-lang.modules" %% "scala-async"          % "0.10.0",
     "com.typesafe.akka"      %% "akka-actor"           % akkaV,
     "com.typesafe.akka"      %% "akka-stream"          % akkaV,
     "com.typesafe.akka"      %% "akka-http-core"       % akkaHttpV,
