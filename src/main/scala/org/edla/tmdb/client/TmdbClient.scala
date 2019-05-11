@@ -88,7 +88,7 @@ class TmdbClient(apiKey: String, language: String, tmdbTimeOut: FiniteDuration) 
   log.info(s"TMDb timeout value is $tmdbTimeOut")
 
   //could not find implicit value for parameter um:
-  //http://kto.so/2016/04/10/hakk-the-planet-implementing-akka-http-marshallers/
+  //https://web.archive.org/web/20180816230355/http://kto.so/2016/04/10/hakk-the-planet-implementing-akka-http-marshallers/
   /*
   def manageRequest[@specialized T](request: String): Future[T] = {
     val promise = Promise[HttpResponse]()
