@@ -2,7 +2,7 @@
 [![Build Status](https://img.shields.io/travis/newca12/TMDb-async-client.svg)](https://travis-ci.org/newca12/TMDb-async-client)
 [![codecov.io](https://img.shields.io/codecov/c/github/newca12/TMDb-async-client.svg)](https://codecov.io/github/newca12/TMDb-async-client?branch=master)
 [![Ohloh](http://www.ohloh.net/p/TMDb-async-client/widgets/project_thin_badge.gif)](https://www.ohloh.net/p/TMDb-async-client)
-[![Maven Central](https://img.shields.io/maven-central/v/org.edla/tmdb-async-client_2.12.svg)](https://maven-badges.herokuapp.com/maven-central/org.edla/tmdb-async-client_2.12)
+[![Maven Central](https://img.shields.io/maven-central/v/org.edla/tmdb-async-client_2.13.svg)](https://maven-badges.herokuapp.com/maven-central/org.edla/tmdb-async-client_2.13)
 
 ### About ###
 TMDb-async-client is a native Scala SDK that provides asynchronous access to [The Movie Database][1] (TMDb) API.  
