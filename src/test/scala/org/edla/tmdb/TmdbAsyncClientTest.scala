@@ -26,7 +26,7 @@ class TmdbAsyncClientTest extends PropSpec with Matchers with ScalaFutures with 
 
   val tmdbClient = TmdbClient(apiKey)
 
-  implicit val timeout: FiniteDuration = 10 seconds
+  implicit val timeout: FiniteDuration = 10.seconds
 
   implicit val defaultPatience: PatienceConfig = PatienceConfig(timeout = Span(5, Seconds), interval = Span(1, Seconds))
 

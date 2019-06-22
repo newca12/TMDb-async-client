@@ -16,7 +16,7 @@ object Usage extends App {
 
   val tmdbClient = apiKey match {
     case Success(key) => runDemo(TmdbClient(key, "fr"))
-    case Failure(e) =>
+    case Failure(e @ _) =>
       System.err.println("API Key need to be available as an environment variable named apiKey")
       System.exit(1)
   }

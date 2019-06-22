@@ -93,8 +93,9 @@ class TmdbClient(apiKey: String, language: String, tmdbTimeOut: FiniteDuration) 
   def manageRequest[@specialized T](request: String): Future[T] = {
     val promise = Promise[HttpResponse]()
     queue.offer((RequestBuilding.Get(request), promise))
-    promise.future.flatMap { response ⇒
+    promise.future.flatMap { response =>
       Unmarshal(response.entity).to[T]
+    }
   }
    */
 
