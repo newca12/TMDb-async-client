@@ -12,9 +12,14 @@ import scala.util.{Failure, Success, Try}
 
 object Usage extends App {
 
-  val apiKey = "5a1a77e2eba8984804586122754f969f"
+  val apiKey = Try(sys.env("apiKey"))
 
-  runDemo(TmdbClient(apiKey, "fr"))
+  val tmdbClient = apiKey match {
+    case Success(key) => runDemo(TmdbClient(key, "fr"))
+    case Failure(e @ _) =>
+      System.err.println("API Key need to be available as an environment variable named apiKey")
+      System.exit(1)
+  }
 
   private def runDemo(tmdbClient: TmdbClient) = {
 
@@ -36,10 +41,7 @@ object Usage extends App {
       val credits  = Await.result(tmdbClient.getCredits(m.id), timeout)
       val director = credits.crew.find(crew => crew.job == "Director")
       val releases = Await.result(tmdbClient.getReleases(m.id), timeout)
-      val release = releases.countries
-        .find(country => country.iso_3166_1 == "US")
-        .getOrElse(unReleased)
-        .release_date
+      val release  = releases.countries.find(country => country.iso_3166_1 == "US").getOrElse(unReleased).release_date
       val poster =
         tmdbClient.downloadPoster(movie, Paths.get(s"${System.getProperty("user.home")}/poster-${m.id}.jpg"))
       val posterStatus = if (poster.isDefined) {

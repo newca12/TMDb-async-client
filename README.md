@@ -2,7 +2,7 @@
 [![Build Status](https://img.shields.io/travis/newca12/TMDb-async-client.svg)](https://travis-ci.org/newca12/TMDb-async-client)
 [![codecov.io](https://img.shields.io/codecov/c/github/newca12/TMDb-async-client.svg)](https://codecov.io/github/newca12/TMDb-async-client?branch=master)
 [![Ohloh](http://www.ohloh.net/p/TMDb-async-client/widgets/project_thin_badge.gif)](https://www.ohloh.net/p/TMDb-async-client)
-[![Maven Central](https://img.shields.io/maven-central/v/org.edla/tmdb-async-client_2.11.svg)](https://maven-badges.herokuapp.com/maven-central/org.edla/tmdb-async-client_2.11)
+[![Maven Central](https://img.shields.io/maven-central/v/org.edla/tmdb-async-client_2.13.svg)](https://maven-badges.herokuapp.com/maven-central/org.edla/tmdb-async-client_2.13)
 
 ### About ###
 TMDb-async-client is a native Scala SDK that provides asynchronous access to [The Movie Database][1] (TMDb) API.  
@@ -36,7 +36,7 @@ Each function returns a `Future` of the response from the TMDb API, parsed into 
 
   val movies = tmdbClient.searchMovie("shark")
 
-  tmdbClient.downloadPoster(movie, "/tmp/poster.jpg")
+  tmdbClient.downloadPoster(movie, Paths.get("/tmp/poster.jpg"))
 
   tmdbClient.shutdown
 ```
@@ -45,10 +45,14 @@ Each function returns a `Future` of the response from the TMDb API, parsed into 
 
 API Key need to be available as an environment variable named apiKey if you want to run sbt test
 
+### Related Projects ###
+
+[JavaFX client for TMDb (The Movie Database) ](https://github.com/newca12/TMDb-shelf)
+
 ### License ###
-© 2014-2016 Olivier ROLAND. Distributed under the GPLv3 License.
+© 2014-2020 Olivier ROLAND. Distributed under the GPLv3 License.
 
 [1]: http://www.themoviedb.org/
-[2]: http://doc.akka.io/docs/akka-stream-and-http-experimental/snapshot/scala.html
-[3]: http://doc.akka.io/docs/akka-stream-and-http-experimental/snapshot/scala/http/common/json-support.html
-[4]: http://doc.akka.io/docs/akka-stream-and-http-experimental/snapshot/scala/stream-cookbook.html#Globally_limiting_the_rate_of_a_set_of_streams
+[2]: http://doc.akka.io/docs/akka-http/current/scala/http/index.html
+[3]: http://doc.akka.io/docs/akka-http/current/scala/http/common/json-support.html
+[4]: http://doc.akka.io/docs/akka/2.4/scala/stream/stream-cookbook.html#Globally_limiting_the_rate_of_a_set_of_streams
