@@ -1,9 +1,11 @@
 package org.edla.tmdb.api
 
-import acyclic.file
-import scala.concurrent.Future
+//import acyclic.file
+import java.nio.file.Path
 
-import Protocol.{ AuthenticateResult, Configuration, Credits, Movie, Results }
+import scala.concurrent.Future
+import Protocol.{AuthenticateResult, Configuration, Credits, Movie, Results}
+import akka.stream.IOResult
 
 trait TmdbApi {
   def getMovie(id: Long): Future[Movie]
@@ -11,6 +13,6 @@ trait TmdbApi {
   def getConfiguration(): Future[Configuration]
   def getToken(): Future[AuthenticateResult]
   def searchMovie(query: String, page: Int): Future[Results]
-  def downloadPoster(movie: Movie, path: String): Future[Boolean]
+  def downloadPoster(movie: Movie, path: Path): Option[Future[IOResult]]
   def shutdown(): Unit
 }

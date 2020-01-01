@@ -1,19 +1,9 @@
 package org.edla.tmdb.client
 
-import acyclic.file
-import scala.collection.immutable.Queue
-import scala.concurrent._
-import scala.concurrent.duration._
-import akka._
+//import acyclic.file
 import akka.actor._
-import akka.pattern._
-import akka.util._
 
-import akka.stream._
-import akka.stream.ActorMaterializer
-import akka.stream.actor._
-import akka.stream.stage._
-import akka.stream.scaladsl._
+import scala.concurrent.duration._
 
 //http://doc.akka.io/docs/akka-stream-and-http-experimental/2.0-M1/scala/stream-cookbook.html#Globally_limiting_the_rate_of_a_set_of_streams
 object Limiter {
@@ -24,10 +14,11 @@ object Limiter {
   case object ReplenishTokens
 
   def props(
-    maxAvailableTokens: Int,
-    tokenRefreshPeriod: FiniteDuration,
-    tokenRefreshAmount: Int
-  ): Props = Props(new Limiter(maxAvailableTokens, tokenRefreshPeriod, tokenRefreshAmount))
+      maxAvailableTokens: Int,
+      tokenRefreshPeriod: FiniteDuration,
+      tokenRefreshAmount: Int
+  ): Props =
+    Props(new Limiter(maxAvailableTokens, tokenRefreshPeriod, tokenRefreshAmount))
 }
 
 class Limiter(
@@ -36,29 +27,34 @@ class Limiter(
     val tokenRefreshAmount: Int
 ) extends Actor {
   import Limiter._
-  import context.dispatcher
   import akka.actor.Status
+  import context.dispatcher
 
-  private var waitQueue = scala.collection.immutable.Queue.empty[ActorRef]
+  private var waitQueue    = scala.collection.immutable.Queue.empty[ActorRef]
   private var permitTokens = maxAvailableTokens
-  private val replenishTimer = system.scheduler.schedule(initialDelay = tokenRefreshPeriod, interval = tokenRefreshPeriod, receiver = self, ReplenishTokens)
+  private val replenishTimer = system.scheduler.schedule(
+    initialDelay = tokenRefreshPeriod,
+    interval = tokenRefreshPeriod,
+    receiver = self,
+    ReplenishTokens
+  )
 
   override def receive: Receive = open
 
   val open: Receive = {
-    case ReplenishTokens ⇒
+    case ReplenishTokens =>
       permitTokens = math.min(permitTokens + tokenRefreshAmount, maxAvailableTokens)
-    case WantToPass ⇒
+    case WantToPass =>
       permitTokens -= 1
       sender() ! MayPass
       if (permitTokens == 0) context.become(closed)
   }
 
   val closed: Receive = {
-    case ReplenishTokens ⇒
+    case ReplenishTokens =>
       permitTokens = math.min(permitTokens + tokenRefreshAmount, maxAvailableTokens)
       releaseWaiting()
-    case WantToPass ⇒
+    case WantToPass =>
       waitQueue = waitQueue.enqueue(sender())
   }
 
