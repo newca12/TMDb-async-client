@@ -2,7 +2,7 @@
 sudo: false
 language: scala
 scala:
-- 2.13.1
+- 2.13.6
 jdk:
 - openjdk13
 

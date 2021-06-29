@@ -1,8 +1,8 @@
 name := "TMDb-async-client"
 organization := "org.edla"
-version := "2.2.0"
+version := "2.2.1"
 
-scalaVersion in ThisBuild := "2.13.1"
+scalaVersion in ThisBuild := "2.13.6"
 
 coverageExcludedPackages := "org.edla.tmdb.client.Usage"
 scalacOptions ++= Seq(
@@ -24,7 +24,6 @@ scalacOptions ++= Seq(
   "-Xlint:inaccessible",           // Warn about inaccessible types in method signatures.
   "-Xlint:infer-any",              // Warn when a type argument is inferred to be `Any`.
   "-Xlint:missing-interpolator",   // A string literal appears to be missing an interpolator id.
-  "-Xlint:nullary-override",       // Warn when non-nullary `def f()' overrides nullary `def f'.
   "-Xlint:nullary-unit",           // Warn when nullary methods return Unit.
   "-Xlint:option-implicit",        // Option.apply used implicit view.
   "-Xlint:package-object-classes", // Class or object defined in package object.
@@ -47,18 +46,18 @@ scalacOptions ++= Seq(
 //wartremoverErrors ++= Warts.unsafe
 scalacOptions in (Compile, doc) ++= Seq("-diagrams", "-implicits")
 libraryDependencies ++= {
-  val akkaV     = "2.6.1"
-  val akkaHttpV = "10.1.11"
+  val akkaV     = "2.6.15"
+  val akkaHttpV = "10.2.4"
   Seq(
-    "org.scala-lang.modules" %% "scala-async"          % "0.10.0",
-    "com.typesafe.akka"      %% "akka-actor"           % akkaV,
-    "com.typesafe.akka"      %% "akka-stream"          % akkaV,
-    "com.typesafe.akka"      %% "akka-http-core"       % akkaHttpV,
-    "com.typesafe.akka"      %% "akka-http"            % akkaHttpV,
-    "com.typesafe.akka"      %% "akka-http-spray-json" % akkaHttpV,
-    "com.typesafe.akka"      %% "akka-stream-contrib"  % "0.11",
-    "org.scala-lang.modules" %% "scala-java8-compat"   % "0.9.0",
-    "org.scalatest"          %% "scalatest"            % "3.1.0" % "test"
+    "org.scala-lang.modules" %% "scala-async"              % "0.10.0",
+    "com.typesafe.akka"      %% "akka-actor"               % akkaV,
+    "com.typesafe.akka"      %% "akka-stream"              % akkaV,
+    "com.typesafe.akka"      %% "akka-http-core"           % akkaHttpV,
+    "com.typesafe.akka"      %% "akka-http"                % akkaHttpV,
+    "com.typesafe.akka"      %% "akka-http-spray-json"     % akkaHttpV,
+    "com.typesafe.akka"      %% "akka-stream-contrib"      % "0.11",
+    "org.scalatest"          %% "scalatest-propspec"       % "3.2.9" % "test",
+    "org.scalatest"          %% "scalatest-shouldmatchers" % "3.2.9" % "test"
   )
 }
 

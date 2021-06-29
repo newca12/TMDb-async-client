@@ -44,7 +44,7 @@ object Protocol extends DefaultJsonProtocol {
       title: String,
       popularity: Double,
       vote_count: Int,
-      vote_average: Int,
+      vote_average: Double,
       backdrop_path: Option[String]
   )
   final case class Results(total_results: Int, results: List[Result], page: Int, total_pages: Int)
@@ -60,7 +60,7 @@ object Protocol extends DefaultJsonProtocol {
   final case class Configuration(images: Images, change_keys: List[String])
   final case class Cast(
       cast_id: Int,
-      character: String,
+      character: Option[String],
       credit_id: String,
       name: String,
       order: Int,

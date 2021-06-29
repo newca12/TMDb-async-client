@@ -2,8 +2,8 @@ package org.edla.tmdb
 
 import java.io.File
 import java.nio.file.{Files, Paths}
-
 import org.edla.tmdb.api.Protocol.Movie
+import org.scalatest.GivenWhenThen
 
 import scala.concurrent.Future
 import scala.concurrent.duration.FiniteDuration
@@ -12,7 +12,8 @@ import scala.concurrent.duration.FiniteDuration
 import org.edla.tmdb.client.{InvalidApiKeyException, TmdbClient}
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.time._
-import org.scalatest.{GivenWhenThen, Matchers, PropSpec}
+import org.scalatest.propspec.AnyPropSpec
+import org.scalatest.matchers.should.Matchers
 
 //import scala.concurrent.Future
 import scala.concurrent.duration.DurationInt
@@ -20,7 +21,7 @@ import scala.util.{Failure, Success}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-class TmdbAsyncClientTest extends PropSpec with Matchers with ScalaFutures with GivenWhenThen {
+class TmdbAsyncClientTest extends AnyPropSpec with Matchers with ScalaFutures with GivenWhenThen {
 
   val apiKey: String = sys.env("apiKey")
 
@@ -61,7 +62,7 @@ class TmdbAsyncClientTest extends PropSpec with Matchers with ScalaFutures with 
         }
       }
       And("the poster should be OK")
-      Files.size(path) should (be(17695) or be(13166))
+      Files.size(path) should (be(17695) or be(13166)or be(13194))
     }
   }
 
@@ -104,7 +105,7 @@ class TmdbAsyncClientTest extends PropSpec with Matchers with ScalaFutures with 
       releases.countries
         .find(country => country.iso_3166_1 == "US")
         .get
-        .release_date should be("1994-10-14")
+        .release_date should be("1994-09-23")
     }
   }
 
