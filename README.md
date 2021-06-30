@@ -1,7 +1,6 @@
 # TMDb-async-client
-[![Build Status](https://img.shields.io/travis/newca12/TMDb-async-client.svg)](https://travis-ci.org/newca12/TMDb-async-client)
+[![Actions Status](https://github.com/newca12/TMDb-async-client/workflows/Scala%20CI/badge.svg?branch=without-X-RateLimit)](https://github.com/newca12/TMDb-async-client/actions)
 [![codecov.io](https://img.shields.io/codecov/c/github/newca12/TMDb-async-client.svg)](https://codecov.io/github/newca12/TMDb-async-client?branch=master)
-[![Ohloh](http://www.ohloh.net/p/TMDb-async-client/widgets/project_thin_badge.gif)](https://www.ohloh.net/p/TMDb-async-client)
 [![Maven Central](https://img.shields.io/maven-central/v/org.edla/tmdb-async-client_2.13.svg)](https://maven-badges.herokuapp.com/maven-central/org.edla/tmdb-async-client_2.13)
 
 ### About ###
@@ -50,7 +49,7 @@ API Key need to be available as an environment variable named apiKey if you want
 [JavaFX client for TMDb (The Movie Database) ](https://github.com/newca12/TMDb-shelf)
 
 ### License ###
-© 2014-2020 Olivier ROLAND. Distributed under the GPLv3 License.
+© 2014-2021 Olivier ROLAND. Distributed under the GPLv3 License.
 
 [1]: http://www.themoviedb.org/
 [2]: http://doc.akka.io/docs/akka-http/current/scala/http/index.html
