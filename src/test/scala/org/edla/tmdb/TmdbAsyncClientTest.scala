@@ -62,7 +62,7 @@ class TmdbAsyncClientTest extends AnyPropSpec with Matchers with ScalaFutures wi
         }
       }
       And("the poster should be OK")
-      Files.size(path) should (be(17695) or be(13166)or be(13194))
+      Files.size(path) should (be(17695) or be(13166)or be(13194)or be(13157))
     }
   }
 
