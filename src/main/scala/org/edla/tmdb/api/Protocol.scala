@@ -23,7 +23,7 @@ object Protocol extends DefaultJsonProtocol {
       original_title: String,
       poster_path: Option[String],
       production_countries: List[ProductionCountry],
-      revenue: Int,
+      revenue: Long,
       homepage: Option[String],
       imdb_id: Option[String],
       id: Int,
